@@ -1,6 +1,6 @@
 {
   "name": "CDC/CCIH Islamabad Careers & HR Recruitment Portal",
-  "description": "Official job application portal and HR recruitment management dashboard for CDC/CCIH Hospital & Diagnostic Center, Islamabad.",
+  "description": "Official job application portal and HR recruitment management dashboard for Capital Care International Hospital (CCIH) & Capital Diagnostic Centre (CDC), Islamabad. Developed by Imran Yaseen 0302-7563119.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

@@ -9,8 +9,13 @@ import {
   RotateCcw,
   Sparkles,
   Phone,
-  MapPin
+  MapPin,
+  Cloud,
+  LogIn,
+  LogOut,
+  User as UserIcon
 } from 'lucide-react';
+import { User } from 'firebase/auth';
 
 interface HospitalHeaderProps {
   currentView: 'applicant' | 'tracker' | 'hr_dashboard';
@@ -19,6 +24,10 @@ interface HospitalHeaderProps {
   totalOpenJobs: number;
   totalApplications: number;
   onResetDemoData: () => void;
+  currentUser: User | null;
+  onLoginWithGoogle: () => void;
+  onLogout: () => void;
+  isFirebaseSyncing: boolean;
 }
 
 export const HospitalHeader: React.FC<HospitalHeaderProps> = ({
@@ -28,6 +37,10 @@ export const HospitalHeader: React.FC<HospitalHeaderProps> = ({
   totalOpenJobs,
   totalApplications,
   onResetDemoData,
+  currentUser,
+  onLoginWithGoogle,
+  onLogout,
+  isFirebaseSyncing,
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
@@ -35,7 +48,7 @@ export const HospitalHeader: React.FC<HospitalHeaderProps> = ({
       <div className="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1 text-emerald-400 font-medium">
+            <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
               <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               Official Careers & E-Recruitment Portal
             </span>
@@ -44,18 +57,57 @@ export const HospitalHeader: React.FC<HospitalHeaderProps> = ({
               Main Campus: Sector G-8 Markaz & Blue Area, Islamabad
             </span>
           </div>
-          <div className="flex items-center gap-4 text-slate-400">
-            <span className="hidden sm:inline-flex items-center gap-1">
-              <Phone className="w-3 h-3 text-slate-400" />
-              HR Helpline: +92 (51) 228-4001
+
+          <div className="flex items-center gap-3 sm:gap-4 text-slate-400">
+            {/* Developer Credit */}
+            <a 
+              href="tel:03027563119"
+              className="inline-flex items-center gap-1.5 text-slate-300 hover:text-white bg-slate-800/90 hover:bg-slate-800 border border-slate-700/80 px-2.5 py-0.5 rounded-md text-[11px] transition-colors"
+              title="Developer: Imran Yaseen 0302-7563119"
+            >
+              <span className="text-slate-400">Dev:</span>
+              <span className="font-semibold text-slate-100">Imran Yaseen</span>
+              <span className="text-emerald-400 font-mono">0302-7563119</span>
+            </a>
+
+            {/* Firebase Live Cloud indicator */}
+            <span className="inline-flex items-center gap-1.5 text-[11px] text-emerald-300 bg-emerald-950/60 border border-emerald-800/80 px-2 py-0.5 rounded-md font-mono">
+              <Cloud className={`w-3 h-3 ${isFirebaseSyncing ? 'animate-bounce text-emerald-400' : 'text-emerald-400'}`} />
+              <span>Firestore Live</span>
             </span>
+
+            {/* Auth control */}
+            {currentUser ? (
+              <div className="flex items-center gap-2 text-[11px] bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700">
+                <span className="text-slate-200 font-medium truncate max-w-[130px]" title={currentUser.email || currentUser.displayName || 'Admin'}>
+                  {currentUser.displayName || currentUser.email?.split('@')[0]}
+                </span>
+                <button
+                  onClick={onLogout}
+                  className="text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
+                  title="Sign out of HR Admin"
+                >
+                  <LogOut className="w-3 h-3" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={onLoginWithGoogle}
+                className="inline-flex items-center gap-1 text-[11px] text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
+                title="Sign in with Google (HR Portal)"
+              >
+                <LogIn className="w-3 h-3 text-emerald-400" />
+                <span>HR Sign In</span>
+              </button>
+            )}
+
             <button
               onClick={onResetDemoData}
               title="Reset initial demo applications and jobs"
               className="hover:text-white flex items-center gap-1 text-[11px] transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3 h-3" />
-              Reset Demo Data
+              <span className="hidden sm:inline">Reset Demo</span>
             </button>
           </div>
         </div>
@@ -83,7 +135,7 @@ export const HospitalHeader: React.FC<HospitalHeaderProps> = ({
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 font-medium">
-                  Capital Diagnostic Centre & Comprehensive Care Hospital
+                  Capital Diagnostic Centre & Capital Care International Hospital
                 </p>
               </div>
             </button>

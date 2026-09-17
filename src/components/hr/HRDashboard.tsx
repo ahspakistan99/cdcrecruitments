@@ -200,11 +200,20 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
       {/* Dashboard Top Greeting & Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-[11px] font-bold uppercase tracking-wider bg-slate-900 text-white px-2.5 py-0.5 rounded-md">
               Hospital Executive HR
             </span>
-            <span className="text-xs text-slate-500">CDC/CCIH Islamabad Campus</span>
+            <span className="text-xs text-slate-500 font-medium">Capital Care International Hospital (CCIH) & CDC Islamabad</span>
+            <a 
+              href="tel:03027563119"
+              className="inline-flex items-center gap-1 text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md hover:bg-emerald-100 transition-colors ml-auto sm:ml-0"
+              title="Developed by Imran Yaseen"
+            >
+              <span className="text-slate-600">Dev:</span>
+              <span className="font-bold">Imran Yaseen</span>
+              <span className="font-mono text-emerald-800">0302-7563119</span>
+            </a>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Outfit'] mt-1">
             Recruitment & Credentials Command Center

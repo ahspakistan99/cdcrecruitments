@@ -1,0 +1,98 @@
+{
+  "entities": {
+    "JobPost": {
+      "title": "JobPost",
+      "description": "Hospital vacancy posting created by CDC/CCIH HR administrators",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 200 },
+        "department": { "type": "string", "maxLength": 64 },
+        "subUnit": { "type": "string", "maxLength": 128 },
+        "employmentType": { "type": "string", "maxLength": 64 },
+        "location": { "type": "string", "maxLength": 128 },
+        "minExperienceYears": { "type": "number" },
+        "experienceLabel": { "type": "string", "maxLength": 64 },
+        "minQualification": { "type": "string", "maxLength": 128 },
+        "salaryRange": { "type": "string", "maxLength": 128 },
+        "openings": { "type": "number" },
+        "deadline": { "type": "string", "maxLength": 64 },
+        "description": { "type": "string", "maxLength": 5000 },
+        "responsibilities": { "type": "array" },
+        "requirements": { "type": "array" },
+        "status": { "type": "string", "enum": ["open", "closed", "urgent"] },
+        "postedDate": { "type": "string", "maxLength": 64 },
+        "applicantCount": { "type": "number" },
+        "licenseRequired": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "title", "department", "status"]
+    },
+    "JobApplication": {
+      "title": "JobApplication",
+      "description": "Candidate application submitted for a hospital job opening",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "jobId": { "type": "string", "maxLength": 128 },
+        "jobTitle": { "type": "string", "maxLength": 200 },
+        "department": { "type": "string", "maxLength": 64 },
+        "appliedAt": { "type": "string", "maxLength": 64 },
+        "fullName": { "type": "string", "maxLength": 150 },
+        "fatherOrHusbandName": { "type": "string", "maxLength": 150 },
+        "cnic": { "type": "string", "maxLength": 30 },
+        "gender": { "type": "string", "maxLength": 20 },
+        "dob": { "type": "string", "maxLength": 30 },
+        "email": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "city": { "type": "string", "maxLength": 100 },
+        "address": { "type": "string", "maxLength": 500 },
+        "highestDegree": { "type": "string", "maxLength": 150 },
+        "specialization": { "type": "string", "maxLength": 150 },
+        "institution": { "type": "string", "maxLength": 200 },
+        "passingYear": { "type": "string", "maxLength": 20 },
+        "registrationNumber": { "type": "string", "maxLength": 64 },
+        "totalExperienceYears": { "type": "number" },
+        "currentEmployer": { "type": "string", "maxLength": 200 },
+        "currentDesignation": { "type": "string", "maxLength": 150 },
+        "currentSalary": { "type": "string", "maxLength": 64 },
+        "expectedSalary": { "type": "string", "maxLength": 64 },
+        "noticePeriodDays": { "type": "number" },
+        "resumeFileName": { "type": "string", "maxLength": 200 },
+        "resumeFileSize": { "type": "string", "maxLength": 50 },
+        "coverLetter": { "type": "string", "maxLength": 3000 },
+        "hasCnicCopy": { "type": "boolean" },
+        "hasDegreeCopy": { "type": "boolean" },
+        "hasLicenseCopy": { "type": "boolean" },
+        "status": { "type": "string", "maxLength": 32 },
+        "rating": { "type": "number" },
+        "tags": { "type": "array" }
+      },
+      "required": ["id", "jobId", "fullName", "email", "phone", "status"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Authorized CDC/CCIH hospital recruitment administrator",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "maxLength": 150 },
+        "role": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/jobs/{jobId}": {
+      "schema": "JobPost",
+      "description": "Public hospital vacancies and departmental postings"
+    },
+    "/applications/{applicationId}": {
+      "schema": "JobApplication",
+      "description": "Candidate job applications submitted to CDC/CCIH"
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Authorized HR administrators and recruitment officers"
+    }
+  }
+}

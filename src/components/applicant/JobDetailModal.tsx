@@ -142,7 +142,7 @@ export const JobDetailModal: React.FC<JobDetailModalProps> = ({ job, onClose, on
           <div className="p-4 bg-teal-50/50 rounded-2xl border border-teal-100 text-xs text-teal-900 space-y-1">
             <h4 className="font-bold flex items-center gap-1.5 text-teal-950">
               <Building2 className="w-4 h-4 text-teal-700" />
-              CDC/CCIH Islamabad Work Environment
+              Capital Care International Hospital (CCIH) Islamabad Work Environment
             </h4>
             <p className="text-teal-800/90 leading-relaxed">
               Equipped with international standard diagnostic instruments, sterile operating theaters, 

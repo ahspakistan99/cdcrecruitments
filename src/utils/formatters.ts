@@ -47,7 +47,7 @@ export function formatPhone(val: string): string {
   return `${digits.slice(0, 4)}-${digits.slice(4)}`;
 }
 
-export function exportApplicationsToCSV(applications: any[], filename = 'CDC_CCIH_Hospital_Applications.csv') {
+export function exportApplicationsToCSV(applications: any[], filename = 'Capital_Care_International_Hospital_Applications.csv') {
   const headers = [
     'Tracking ID',
     'Full Name',

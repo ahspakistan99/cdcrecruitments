@@ -12,10 +12,12 @@ import {
   Phone,
   Building2,
   XCircle,
-  HelpCircle
+  HelpCircle,
+  Loader2
 } from 'lucide-react';
 import { JobApplication } from '../../types';
 import { getStatusBadge, getDepartmentInfo } from '../../utils/formatters';
+import { getApplicationByTrackingId } from '../../services/firebaseService';
 
 interface ApplicationTrackerModalProps {
   applications: JobApplication[];
@@ -29,6 +31,7 @@ export const ApplicationTrackerModal: React.FC<ApplicationTrackerModalProps> = (
   onApplyForOtherPosition,
 }) => {
   const [query, setQuery] = useState(defaultSearchId);
+  const [isSearchingCloud, setIsSearchingCloud] = useState(false);
   const [searchedApp, setSearchedApp] = useState<JobApplication | null>(() => {
     if (defaultSearchId) {
       return applications.find(a => a.id.toLowerCase() === defaultSearchId.toLowerCase()) || null;
@@ -37,24 +40,39 @@ export const ApplicationTrackerModal: React.FC<ApplicationTrackerModalProps> = (
   });
   const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSearch = (e?: React.FormEvent) => {
+  const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setHasSearched(true);
-    const clean = query.trim().toLowerCase();
+    const clean = query.trim();
     if (!clean) {
       setSearchedApp(null);
       return;
     }
 
-    const found = applications.find(
+    const cleanLower = clean.toLowerCase();
+    const foundLocal = applications.find(
       app =>
-        app.id.toLowerCase() === clean ||
-        app.cnic.toLowerCase().includes(clean) ||
-        app.phone.toLowerCase().includes(clean) ||
-        app.email.toLowerCase() === clean
+        app.id.toLowerCase() === cleanLower ||
+        app.cnic.toLowerCase().includes(cleanLower) ||
+        app.phone.toLowerCase().includes(cleanLower) ||
+        app.email.toLowerCase() === cleanLower
     );
 
-    setSearchedApp(found || null);
+    if (foundLocal) {
+      setSearchedApp(foundLocal);
+      return;
+    }
+
+    // Try live Cloud Firestore lookup
+    setIsSearchingCloud(true);
+    try {
+      const cloudApp = await getApplicationByTrackingId(clean.toUpperCase());
+      setSearchedApp(cloudApp);
+    } catch {
+      setSearchedApp(null);
+    } finally {
+      setIsSearchingCloud(false);
+    }
   };
 
   const statusInfo = searchedApp ? getStatusBadge(searchedApp.status) : null;
@@ -88,7 +106,7 @@ export const ApplicationTrackerModal: React.FC<ApplicationTrackerModalProps> = (
       {/* Header */}
       <div className="text-center space-y-2">
         <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-          CDC/CCIH Islamabad Applicant Service
+          Capital Care International Hospital (CCIH) Applicant Service
         </span>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Outfit']">
           Track Your Job Application Status
@@ -179,7 +197,7 @@ export const ApplicationTrackerModal: React.FC<ApplicationTrackerModalProps> = (
                 <div className="text-xs">
                   <strong className="block font-bold">Application Status: Not Selected</strong>
                   <p className="text-rose-700/90 mt-0.5">
-                    Thank you for your interest in CDC/CCIH Hospital. On this occasion, other applicants more closely matched the specific criteria. Your resume remains in our talent pool for future vacancies.
+                    Thank you for your interest in Capital Care International Hospital (CCIH). On this occasion, other applicants more closely matched the specific criteria. Your resume remains in our talent pool for future vacancies.
                   </p>
                 </div>
               </div>

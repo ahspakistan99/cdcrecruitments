@@ -456,7 +456,7 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
                   </h3>
                   <p className="text-xs text-slate-600 leading-relaxed">
                     Dedicated healthcare professional with {application.totalExperienceYears} years of hands-on expertise seeking
-                    to contribute to clinical excellence and compassionate patient care at CDC/CCIH Hospital Islamabad.
+                    to contribute to clinical excellence and compassionate patient care at Capital Care International Hospital (CCIH) Islamabad.
                   </p>
                 </div>
 
@@ -503,7 +503,7 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
               <div className="p-4 bg-purple-50 rounded-2xl border border-purple-200">
                 <h3 className="text-sm font-bold text-purple-950 font-['Outfit'] flex items-center gap-2">
                   <CalendarCheck className="w-5 h-5 text-purple-700" />
-                  CDC/CCIH Hospital Interview Call Scheduler
+                  Capital Care International Hospital (CCIH) Interview Call Scheduler
                 </h3>
                 <p className="text-xs text-purple-800 mt-1">
                   Schedule or modify the candidate’s interview call. The status will automatically transition to{' '}

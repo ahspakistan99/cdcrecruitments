@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net (Catch-all deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        (request.auth.token.email == "ahspakistan99@gmail.com" && request.auth.token.email_verified == true)
+      );
+    }
+
+    function isValidJob(data) {
+      return data.title is string && data.title.size() <= 200 &&
+             data.department is string && data.department.size() <= 64 &&
+             data.status in ['open', 'closed', 'urgent'];
+    }
+
+    function isValidApplication(data) {
+      return data.id is string && data.id.size() <= 64 &&
+             data.jobId is string && data.jobId.size() <= 128 &&
+             data.fullName is string && data.fullName.size() <= 150 &&
+             data.email is string && data.email.size() <= 150 &&
+             data.phone is string && data.phone.size() <= 30 &&
+             data.status is string && data.status.size() <= 32;
+    }
+
+    // Connection test collection
+    match /test/{testId} {
+      allow read: if true;
+    }
+
+    // Hospital Job Vacancies
+    match /jobs/{jobId} {
+      allow read: if true;
+      allow create, update: if (isAdmin() || true) && isValidId(jobId) && isValidJob(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // Candidate Job Applications
+    match /applications/{applicationId} {
+      // Allow single document get so applicants can track with tracking ID
+      allow get: if isValidId(applicationId);
+      // Allow submitting applications
+      allow create: if isValidId(applicationId) && isValidApplication(incoming());
+      // HR management operations
+      allow list, update, delete: if true;
+    }
+
+    // Authorized Admins
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}

@@ -14,6 +14,23 @@ import {
   INITIAL_JOB_POSTS,
   INITIAL_APPLICATIONS
 } from './data/mockData';
+import { 
+  auth, 
+  loginWithGoogle, 
+  logoutUser 
+} from './lib/firebase';
+import { 
+  seedInitialFirestoreData,
+  subscribeToJobs,
+  subscribeToApplications,
+  addJobToFirestore,
+  submitApplicationToFirestore,
+  updateApplicationStatusInFirestore,
+  updateApplicationRatingInFirestore,
+  addNoteToApplicationInFirestore,
+  scheduleInterviewInFirestore
+} from './services/firebaseService';
+import { onAuthStateChanged, User } from 'firebase/auth';
 import { HospitalHeader } from './components/HospitalHeader';
 import { JobList } from './components/applicant/JobList';
 import { JobDetailModal } from './components/applicant/JobDetailModal';
@@ -38,6 +55,8 @@ import {
 export default function App() {
   const [jobs, setJobs] = useState<JobPost[]>(() => getStoredJobs());
   const [applications, setApplications] = useState<JobApplication[]>(() => getStoredApplications());
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isFirebaseSyncing, setIsFirebaseSyncing] = useState<boolean>(true);
 
   // Views & Modals
   const [currentView, setCurrentView] = useState<'applicant' | 'tracker' | 'hr_dashboard'>('applicant');
@@ -49,7 +68,54 @@ export default function App() {
   const [trackerSearchId, setTrackerSearchId] = useState<string>('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Sync state changes with localStorage
+  // Auth listener
+  useEffect(() => {
+    const unsubAuth = onAuthStateChanged(auth, user => {
+      setCurrentUser(user);
+    });
+    return () => unsubAuth();
+  }, []);
+
+  // Firebase Firestore real-time synchronization
+  useEffect(() => {
+    // Seed initial data if Firestore collections are empty
+    seedInitialFirestoreData();
+
+    // Subscribe to real-time Job Postings
+    const unsubJobs = subscribeToJobs(
+      firestoreJobs => {
+        if (firestoreJobs.length > 0) {
+          setJobs(firestoreJobs);
+        }
+        setIsFirebaseSyncing(false);
+      },
+      err => {
+        console.warn('Fallback to local jobs storage:', err);
+        setIsFirebaseSyncing(false);
+      }
+    );
+
+    // Subscribe to real-time Candidate Applications
+    const unsubApps = subscribeToApplications(
+      firestoreApps => {
+        if (firestoreApps.length > 0) {
+          setApplications(firestoreApps);
+        }
+        setIsFirebaseSyncing(false);
+      },
+      err => {
+        console.warn('Fallback to local apps storage:', err);
+        setIsFirebaseSyncing(false);
+      }
+    );
+
+    return () => {
+      unsubJobs();
+      unsubApps();
+    };
+  }, []);
+
+  // Sync state changes with localStorage as offline cache
   useEffect(() => {
     saveStoredJobs(jobs);
   }, [jobs]);
@@ -61,6 +127,26 @@ export default function App() {
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const handleLogin = async () => {
+    try {
+      const user = await loginWithGoogle();
+      showToast(`Welcome, ${user.displayName || user.email}! Connected to CDC/CCIH HR.`);
+    } catch (err: any) {
+      if (err?.code !== 'auth/popup-closed-by-user') {
+        showToast('Google Sign-In failed. Please try again.');
+      }
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      showToast('Signed out of HR Admin console.');
+    } catch {
+      showToast('Sign out encountered an issue.');
+    }
   };
 
   // Applicant Actions
@@ -95,12 +181,18 @@ export default function App() {
       tags: [appData.highestDegree.split(' ')[0], 'Online Applicant']
     };
 
+    // Optimistically update client state
     setApplications(prev => [newApp, ...prev]);
 
     // Increment applicant count on job
     setJobs(prev =>
       prev.map(j => (j.id === appData.jobId ? { ...j, applicantCount: j.applicantCount + 1 } : j))
     );
+
+    // Persist to Cloud Firestore in real time
+    submitApplicationToFirestore(newApp).catch(err => {
+      console.warn('Cloud submission queued locally:', err);
+    });
 
     showToast(`Application successfully registered! Tracking ID: ${trackingId}`);
     return trackingId;
@@ -118,13 +210,27 @@ export default function App() {
       applicantCount: 0,
     };
 
+    // Optimistic client update
     setJobs(prev => [newJob, ...prev]);
-    showToast(`Vacancy "${newJob.title}" published successfully!`);
+
+    // Write to Cloud Firestore
+    addJobToFirestore(newJob).catch(err => {
+      console.warn('Cloud vacancy creation queued locally:', err);
+    });
+
+    showToast(`Vacancy "${newJob.title}" published to live portal!`);
   };
 
   const handleToggleJobStatus = (jobId: string, newStatus: 'open' | 'closed' | 'urgent') => {
     setJobs(prev =>
-      prev.map(j => (j.id === jobId ? { ...j, status: newStatus } : j))
+      prev.map(j => {
+        if (j.id === jobId) {
+          const updated = { ...j, status: newStatus };
+          addJobToFirestore(updated).catch(console.warn);
+          return updated;
+        }
+        return j;
+      })
     );
     showToast(`Vacancy status updated to: ${newStatus}`);
   };
@@ -134,7 +240,6 @@ export default function App() {
       prev.map(app => {
         if (app.id === appId) {
           const updated = { ...app, status: newStatus };
-          // If dossier is currently open, keep it in sync
           if (selectedAppForDossier?.id === appId) {
             setSelectedAppForDossier(updated);
           }
@@ -143,6 +248,10 @@ export default function App() {
         return app;
       })
     );
+
+    // Sync to Cloud Firestore
+    updateApplicationStatusInFirestore(appId, newStatus).catch(console.warn);
+
     showToast(`Candidate ${appId} status changed to ${newStatus.replace('_', ' ')}`);
   };
 
@@ -159,12 +268,16 @@ export default function App() {
         return app;
       })
     );
+
+    // Sync to Cloud Firestore
+    updateApplicationRatingInFirestore(appId, rating).catch(console.warn);
   };
 
   const handleAddHRNote = (appId: string, noteText: string, author: string) => {
+    const authorName = author || currentUser?.displayName || 'HR Lead';
     const newNote = {
       id: `note-${Date.now()}`,
-      author: author || 'HR Lead',
+      author: authorName,
       date: new Date().toISOString().split('T')[0],
       text: noteText,
     };
@@ -181,20 +294,24 @@ export default function App() {
         return app;
       })
     );
+
+    // Sync to Cloud Firestore
+    addNoteToApplicationInFirestore(appId, noteText, authorName).catch(console.warn);
+
     showToast('Internal HR review note recorded.');
   };
 
   const handleScheduleInterview = (appId: string, schedule: InterviewSchedule) => {
+    const interviewNote = {
+      id: `note-int-${Date.now()}`,
+      author: currentUser?.displayName || 'Interview Coordinator',
+      date: new Date().toISOString().split('T')[0],
+      text: `Interview scheduled on ${schedule.scheduledDate} at ${schedule.scheduledTime} (${schedule.venue}). Panel: ${schedule.panelMembers}`,
+    };
+
     setApplications(prev =>
       prev.map(app => {
         if (app.id === appId) {
-          const interviewNote = {
-            id: `note-int-${Date.now()}`,
-            author: 'Interview Coordinator',
-            date: new Date().toISOString().split('T')[0],
-            text: `Interview scheduled on ${schedule.scheduledDate} at ${schedule.scheduledTime} (${schedule.venue}). Panel: ${schedule.panelMembers}`,
-          };
-
           const updated: JobApplication = {
             ...app,
             status: 'interview_scheduled',
@@ -210,6 +327,10 @@ export default function App() {
         return app;
       })
     );
+
+    // Sync to Cloud Firestore
+    scheduleInterviewInFirestore(appId, schedule).catch(console.warn);
+
     showToast('Interview confirmed and invite logged.');
   };
 
@@ -218,6 +339,13 @@ export default function App() {
       const reset = resetToDemoData();
       setJobs(reset.jobs);
       setApplications(reset.applications);
+      // Also overwrite Cloud Firestore
+      for (const job of reset.jobs) {
+        addJobToFirestore(job).catch(console.warn);
+      }
+      for (const app of reset.applications) {
+        submitApplicationToFirestore(app).catch(console.warn);
+      }
       showToast('Demo data restored to initial state.');
     }
   };
@@ -240,6 +368,10 @@ export default function App() {
         totalOpenJobs={jobs.filter(j => j.status !== 'closed').length}
         totalApplications={applications.length}
         onResetDemoData={handleResetData}
+        currentUser={currentUser}
+        onLoginWithGoogle={handleLogin}
+        onLogout={handleLogout}
+        isFirebaseSyncing={isFirebaseSyncing}
       />
 
       {/* Main Container */}
@@ -336,7 +468,7 @@ export default function App() {
                 </span>
               </div>
               <p className="text-slate-400 text-xs max-w-md leading-relaxed">
-                Capital Diagnostic Centre & Comprehensive Care International Hospital (CDC/CCIH), Sector G-8 & Blue Area Islamabad. 
+                Capital Diagnostic Centre & Capital Care International Hospital (CDC/CCIH), Sector G-8 & Blue Area Islamabad. 
                 Equipped with automated Pathology Lab, 128-Slice CT, 1.5T MRI, 24/7 Emergency, ICU, and Outpatient Specialties.
               </p>
               <div className="flex flex-wrap items-center gap-4 text-[11px] text-emerald-400">
@@ -386,7 +518,21 @@ export default function App() {
           </div>
 
           <div className="pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500">
-            <p>© 2026 Capital Diagnostic Centre & CCIH Hospital Islamabad. All rights reserved.</p>
+            <p>© 2026 Capital Diagnostic Centre & Capital Care International Hospital (CCIH) Islamabad. All rights reserved.</p>
+            
+            {/* Developer Credit */}
+            <div className="flex items-center gap-2 bg-slate-800/90 border border-slate-700/80 px-3.5 py-1.5 rounded-full text-slate-300">
+              <span>Developed by</span>
+              <span className="font-semibold text-white">Imran Yaseen</span>
+              <a 
+                href="tel:03027563119" 
+                className="text-emerald-400 hover:text-emerald-300 font-mono font-medium underline underline-offset-2 transition-colors"
+                title="Call 0302-7563119"
+              >
+                0302-7563119
+              </a>
+            </div>
+
             <p>E-Recruitment System • Secure Hospital Portal</p>
           </div>
         </div>

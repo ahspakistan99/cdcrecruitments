@@ -44,7 +44,7 @@ export const JobManagementModal: React.FC<JobManagementModalProps> = ({
   const [department, setDepartment] = useState<DepartmentCategory>('pathology_lab');
   const [subUnit, setSubUnit] = useState('Histopathology & Molecular Lab');
   const [employmentType, setEmploymentType] = useState<EmploymentType>('Full-time');
-  const [location, setLocation] = useState('CDC/CCIH Main Campus, Sector G-8, Islamabad');
+  const [location, setLocation] = useState('Capital Care International Hospital (CCIH) & CDC Campus, Sector G-8, Islamabad');
   const [minExperienceYears, setMinExperienceYears] = useState<number>(2);
   const [experienceLabel, setExperienceLabel] = useState('2+ Years');
   const [minQualification, setMinQualification] = useState('BSc MLT / MBBS');
@@ -163,7 +163,7 @@ export const JobManagementModal: React.FC<JobManagementModalProps> = ({
               Hospital Admin Console
             </span>
             <h2 className="text-lg sm:text-xl font-bold text-slate-900 font-['Outfit'] mt-0.5">
-              CDC / CCIH Job Postings & Vacancy Manager
+              Capital Care International Hospital (CCIH) Vacancy Manager
             </h2>
           </div>
           <button
@@ -288,7 +288,7 @@ export const JobManagementModal: React.FC<JobManagementModalProps> = ({
                       type="text"
                       value={location}
                       onChange={e => setLocation(e.target.value)}
-                      placeholder="CDC/CCIH Main Campus, Sector G-8, Islamabad"
+                      placeholder="Capital Care International Hospital (CCIH) & CDC Campus, Islamabad"
                       className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500"
                     />
                   </div>

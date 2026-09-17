@@ -211,7 +211,7 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
-                CDC/CCIH E-Recruitment
+                Capital Care International Hospital (CCIH)
               </span>
               <span className="text-xs text-slate-400">Islamabad Campus</span>
             </div>
@@ -241,7 +241,7 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
               </h3>
               <p className="text-xs sm:text-sm text-slate-600">
                 Thank you, <strong>{fullName}</strong>. Your job application for{' '}
-                <strong>{currentJob?.title}</strong> has been recorded in the CDC/CCIH hospital recruitment database.
+                <strong>{currentJob?.title}</strong> has been recorded in the Capital Care International Hospital (CCIH) recruitment database.
               </p>
             </div>
 
@@ -789,7 +789,7 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
                   {/* Brief Cover Note */}
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Brief Statement / Why you wish to join CDC/CCIH Islamabad
+                      Brief Statement / Why you wish to join Capital Care International Hospital (CCIH)
                     </label>
                     <textarea
                       rows={3}
@@ -805,7 +805,7 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
                     <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span>
                       By clicking submit, I certify that all information provided is accurate and true according to the
-                      rules of CDC/CCIH Hospital, Islamabad.
+                      rules of Capital Care International Hospital (CCIH), Islamabad.
                     </span>
                   </div>
                 </div>
