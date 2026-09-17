@@ -101,46 +101,48 @@ export const HospitalHeader: React.FC<HospitalHeaderProps> = ({
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex items-center flex-wrap gap-2">
-            <nav className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-semibold">
+          <div className="flex items-center w-full lg:w-auto gap-2">
+            <nav className="grid grid-cols-3 w-full lg:w-auto lg:flex p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-semibold">
               <button
                 onClick={() => onNavigate('applicant')}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg transition-all cursor-pointer ${
+                className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3.5 py-2.5 rounded-lg transition-all min-h-[44px] cursor-pointer ${
                   currentView === 'applicant'
                     ? 'bg-white text-slate-900 shadow-xs font-bold'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <Building2 className="w-4 h-4 text-emerald-600" />
-                <span>Open Positions</span>
-                <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-700">
+                <Building2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span className="truncate">
+                  <span className="hidden sm:inline">Open </span>Jobs
+                </span>
+                <span className="ml-0.5 sm:ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-700 shrink-0">
                   {totalOpenJobs}
                 </span>
               </button>
 
               <button
                 onClick={() => onNavigate('tracker')}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg transition-all cursor-pointer ${
+                className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3.5 py-2.5 rounded-lg transition-all min-h-[44px] cursor-pointer ${
                   currentView === 'tracker'
                     ? 'bg-white text-slate-900 shadow-xs font-bold'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <Search className="w-4 h-4 text-blue-600" />
-                <span>Track Application</span>
+                <Search className="w-4 h-4 text-blue-600 shrink-0" />
+                <span className="truncate">Track<span className="hidden sm:inline"> Status</span></span>
               </button>
 
               <button
                 onClick={() => onNavigate('hr_dashboard')}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg transition-all cursor-pointer ${
+                className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3.5 py-2.5 rounded-lg transition-all min-h-[44px] cursor-pointer ${
                   currentView === 'hr_dashboard'
                     ? 'bg-slate-900 text-white shadow-xs font-bold'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <ShieldCheck className="w-4 h-4 text-teal-400" />
-                <span>HR / Admin Portal</span>
-                <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] ${
+                <ShieldCheck className="w-4 h-4 text-teal-400 shrink-0" />
+                <span className="truncate">HR<span className="hidden sm:inline"> Portal</span></span>
+                <span className={`ml-0.5 sm:ml-1 px-1.5 py-0.5 rounded-full text-[10px] shrink-0 ${
                   currentView === 'hr_dashboard' 
                     ? 'bg-emerald-500 text-white' 
                     : 'bg-emerald-100 text-emerald-800'
@@ -153,10 +155,10 @@ export const HospitalHeader: React.FC<HospitalHeaderProps> = ({
             {/* Admin Add Post Button */}
             <button
               onClick={onOpenPostJobModal}
-              className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer min-h-[44px] shrink-0"
             >
               <PlusCircle className="w-4 h-4" />
-              <span>Post New Vacancy</span>
+              <span>Post Vacancy</span>
             </button>
           </div>
         </div>

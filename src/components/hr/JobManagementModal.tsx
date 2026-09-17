@@ -154,31 +154,32 @@ export const JobManagementModal: React.FC<JobManagementModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-150">
-      <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 flex flex-col">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 md:p-6 animate-in fade-in duration-150">
+      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-4xl w-full max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 flex flex-col">
         {/* Header */}
-        <div className="sticky top-0 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-slate-100 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-3.5 border-b border-slate-100 flex items-center justify-between z-10">
           <div>
             <span className="text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
               Hospital Admin Console
             </span>
-            <h2 className="text-xl font-bold text-slate-900 font-['Outfit'] mt-0.5">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900 font-['Outfit'] mt-0.5">
               CDC / CCIH Job Postings & Vacancy Manager
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            aria-label="Close vacancy manager"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab switch */}
-        <div className="px-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50">
+        <div className="px-4 sm:px-6 border-b border-slate-100 flex items-center gap-3 sm:gap-4 bg-slate-50 overflow-x-auto">
           <button
             onClick={() => setActiveTab('create')}
-            className={`py-3 text-xs font-bold border-b-2 flex items-center gap-1.5 cursor-pointer ${
+            className={`py-3 text-xs font-bold border-b-2 flex items-center gap-1.5 cursor-pointer whitespace-nowrap min-h-[44px] ${
               activeTab === 'create'
                 ? 'border-emerald-600 text-emerald-800'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -190,7 +191,7 @@ export const JobManagementModal: React.FC<JobManagementModalProps> = ({
 
           <button
             onClick={() => setActiveTab('manage')}
-            className={`py-3 text-xs font-bold border-b-2 flex items-center gap-1.5 cursor-pointer ${
+            className={`py-3 text-xs font-bold border-b-2 flex items-center gap-1.5 cursor-pointer whitespace-nowrap min-h-[44px] ${
               activeTab === 'manage'
                 ? 'border-emerald-600 text-emerald-800'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -202,7 +203,7 @@ export const JobManagementModal: React.FC<JobManagementModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-6 sm:p-8 flex-1 overflow-y-auto">
+        <div className="p-4 sm:p-6 md:p-8 flex-1 overflow-y-auto">
           {activeTab === 'create' ? (
             <div className="space-y-6">
               {formSuccess && (

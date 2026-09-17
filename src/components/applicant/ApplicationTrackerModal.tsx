@@ -100,19 +100,21 @@ export const ApplicationTrackerModal: React.FC<ApplicationTrackerModalProps> = (
       </div>
 
       {/* Search Input Box */}
-      <form onSubmit={handleSearch} className="max-w-xl mx-auto">
-        <div className="flex items-center gap-2 p-1.5 bg-white rounded-2xl border border-slate-300 shadow-sm focus-within:ring-2 focus-within:ring-emerald-500">
-          <Search className="w-5 h-5 text-slate-400 ml-3" />
-          <input
-            type="text"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            placeholder="Enter Tracking ID (CDC-2026-...) or CNIC..."
-            className="flex-1 px-2 py-2 text-sm focus:outline-none bg-transparent"
-          />
+      <form onSubmit={handleSearch} className="max-w-xl mx-auto px-1">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-1.5 bg-white rounded-2xl border border-slate-300 shadow-sm focus-within:ring-2 focus-within:ring-emerald-500">
+          <div className="flex items-center flex-1">
+            <Search className="w-5 h-5 text-slate-400 ml-3 shrink-0" />
+            <input
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Enter Tracking ID (CDC-2026-...) or CNIC..."
+              className="flex-1 px-2 py-2.5 text-base sm:text-sm focus:outline-none bg-transparent min-h-[44px]"
+            />
+          </div>
           <button
             type="submit"
-            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-xs"
+            className="w-full sm:w-auto px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-xs min-h-[44px] flex items-center justify-center"
           >
             Check Status
           </button>
@@ -120,8 +122,8 @@ export const ApplicationTrackerModal: React.FC<ApplicationTrackerModalProps> = (
       </form>
 
       {/* Quick Demo Tracker Pills */}
-      <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500">
-        <span className="font-semibold text-slate-400">Quick Demo IDs:</span>
+      <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-xs text-slate-500 px-2">
+        <span className="font-semibold text-slate-400 text-[11px] sm:text-xs">Quick Demo IDs:</span>
         {applications.slice(0, 4).map(app => (
           <button
             key={app.id}
@@ -130,7 +132,7 @@ export const ApplicationTrackerModal: React.FC<ApplicationTrackerModalProps> = (
               setSearchedApp(app);
               setHasSearched(true);
             }}
-            className="px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-[11px] transition-colors"
+            className="px-2.5 py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg text-slate-700 font-mono text-[11px] transition-colors min-h-[32px]"
           >
             {app.id} ({app.fullName.split(' ')[0]})
           </button>
@@ -139,25 +141,25 @@ export const ApplicationTrackerModal: React.FC<ApplicationTrackerModalProps> = (
 
       {/* Search Result */}
       {searchedApp ? (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-md overflow-hidden space-y-6">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-md overflow-hidden space-y-4 sm:space-y-6">
           {/* Status Header */}
-          <div className="p-6 sm:p-8 bg-gradient-to-br from-slate-900 via-slate-800 to-teal-950 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-4 sm:p-8 bg-gradient-to-br from-slate-900 via-slate-800 to-teal-950 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="font-mono text-emerald-400 text-sm font-bold tracking-wider">
+                <span className="font-mono text-emerald-400 text-xs sm:text-sm font-bold tracking-wider">
                   {searchedApp.id}
                 </span>
                 <span className="text-xs text-slate-400">• Applied {searchedApp.appliedAt}</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold font-['Outfit']">{searchedApp.fullName}</h2>
-              <p className="text-xs text-slate-300 flex items-center gap-2">
+              <h2 className="text-lg sm:text-2xl font-bold font-['Outfit']">{searchedApp.fullName}</h2>
+              <p className="text-xs text-slate-300 flex flex-wrap items-center gap-1.5 sm:gap-2">
                 <span>Applied For: <strong>{searchedApp.jobTitle}</strong></span>
                 <span>•</span>
                 <span className="text-emerald-300">{dept?.name}</span>
               </p>
             </div>
 
-            <div className="sm:text-right">
+            <div className="sm:text-right w-full sm:w-auto">
               <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border ${statusInfo?.color}`}>
                 <span className={`w-2 h-2 rounded-full ${statusInfo?.dotColor}`}></span>
                 {statusInfo?.label}
@@ -166,8 +168,8 @@ export const ApplicationTrackerModal: React.FC<ApplicationTrackerModalProps> = (
           </div>
 
           {/* Review Process Stepper */}
-          <div className="p-6 sm:p-8 border-b border-slate-100">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-6">
+          <div className="p-4 sm:p-8 border-b border-slate-100">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 sm:mb-6">
               Recruitment Process Progress
             </h3>
 
@@ -183,7 +185,54 @@ export const ApplicationTrackerModal: React.FC<ApplicationTrackerModalProps> = (
               </div>
             ) : (
               <div className="relative">
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                {/* Mobile Vertical Timeline (hidden on sm+) */}
+                <div className="block sm:hidden space-y-3">
+                  {[
+                    { num: 1, label: 'Application Received', desc: 'Recorded in database' },
+                    { num: 2, label: 'Under HR Review', desc: 'Credentials verification' },
+                    { num: 3, label: 'Shortlisted', desc: 'Recommended by department' },
+                    { num: 4, label: 'Interview Scheduled', desc: 'Panel assessment' },
+                    { num: 5, label: 'Final Offer / Hired', desc: 'Joining formalities' },
+                  ].map((stepItem, idx, arr) => {
+                    const isDone = currentStep >= stepItem.num;
+                    const isCurrent = currentStep === stepItem.num;
+
+                    return (
+                      <div
+                        key={stepItem.num}
+                        className={`p-3 rounded-xl border flex items-center gap-3 transition-all ${
+                          isCurrent
+                            ? 'bg-emerald-50/80 border-emerald-500 shadow-xs ring-2 ring-emerald-500/20'
+                            : isDone
+                            ? 'bg-slate-50 border-emerald-300/80'
+                            : 'bg-white border-slate-200 opacity-60'
+                        }`}
+                      >
+                        <div
+                          className={`w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-bold ${
+                            isDone ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
+                          }`}
+                        >
+                          {isDone ? '✓' : stepItem.num}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-xs font-bold text-slate-800 flex items-center justify-between">
+                            <span>{stepItem.label}</span>
+                            {isCurrent && (
+                              <span className="text-[10px] text-emerald-700 font-bold uppercase tracking-wider bg-emerald-100 px-1.5 py-0.2 rounded-sm">
+                                Current
+                              </span>
+                            )}
+                          </h4>
+                          <p className="text-[11px] text-slate-500 mt-0.5">{stepItem.desc}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Tablet/Desktop Horizontal Grid (hidden on mobile) */}
+                <div className="hidden sm:grid sm:grid-cols-5 gap-3">
                   {[
                     { num: 1, label: 'Application Received', desc: 'Recorded in database' },
                     { num: 2, label: 'Under HR Review', desc: 'Credentials verification' },

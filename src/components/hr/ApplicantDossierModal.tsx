@@ -95,31 +95,31 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-150">
-      <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 flex flex-col">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 md:p-6 animate-in fade-in duration-150">
+      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-4xl w-full max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 flex flex-col">
         {/* Top Sticky Header */}
-        <div className="sticky top-0 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 z-10">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm">
+        <div className="sticky top-0 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-3.5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 z-10">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
               {application.fullName.charAt(0)}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-slate-900 font-['Outfit']">{application.fullName}</h2>
-                <span className="font-mono text-xs text-slate-500 font-semibold">{application.id}</span>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 font-['Outfit']">{application.fullName}</h2>
+                <span className="font-mono text-[11px] sm:text-xs text-slate-500 font-semibold">{application.id}</span>
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 line-clamp-1">
                 Applied for <strong>{application.jobTitle}</strong> ({dept.name})
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 ml-auto sm:ml-0">
             {/* Quick Status Dropdown */}
             <select
               value={application.status}
               onChange={e => onUpdateStatus(application.id, e.target.value as ApplicationStatus)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${statusInfo.color}`}
+              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer min-h-[38px] ${statusInfo.color}`}
             >
               <option value="new">New Application</option>
               <option value="under_review">Under Review</option>
@@ -132,7 +132,7 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
 
             <button
               onClick={() => window.print()}
-              className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg"
+              className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg min-h-[38px] min-w-[38px] flex items-center justify-center"
               title="Print Application Dossier"
             >
               <Printer className="w-4 h-4" />
@@ -140,7 +140,8 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
 
             <button
               onClick={onClose}
-              className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+              aria-label="Close dossier"
             >
               <X className="w-5 h-5" />
             </button>
@@ -148,16 +149,17 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
         </div>
 
         {/* Tab switcher */}
-        <div className="px-6 border-b border-slate-100 flex items-center gap-2 bg-slate-50/70">
+        <div className="px-3 sm:px-6 border-b border-slate-100 flex items-center gap-1 sm:gap-2 bg-slate-50/70 overflow-x-auto scrollbar-thin">
           {[
-            { id: 'profile', label: 'Full Dossier & Credentials', icon: User },
-            { id: 'cv_preview', label: 'CV / Resume Document', icon: FileText },
+            { id: 'profile', label: 'Dossier', fullLabel: 'Full Dossier & Credentials', icon: User },
+            { id: 'cv_preview', label: 'CV / Resume', fullLabel: 'CV / Resume Document', icon: FileText },
             { 
               id: 'interview', 
-              label: application.interviewDetails ? 'Interview Scheduled (✓)' : 'Schedule Interview', 
+              label: application.interviewDetails ? 'Interview (✓)' : 'Schedule', 
+              fullLabel: application.interviewDetails ? 'Interview Scheduled (✓)' : 'Schedule Interview', 
               icon: CalendarCheck 
             },
-            { id: 'notes', label: `HR Review Notes (${application.hrNotes.length})`, icon: MessageSquare },
+            { id: 'notes', label: `HR Notes (${application.hrNotes.length})`, fullLabel: `HR Review Notes (${application.hrNotes.length})`, icon: MessageSquare },
           ].map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -165,14 +167,15 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`py-3 px-3 text-xs font-semibold border-b-2 flex items-center gap-1.5 transition-colors cursor-pointer ${
+                className={`py-3 px-2.5 sm:px-3 text-xs font-semibold border-b-2 flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 whitespace-nowrap min-h-[44px] ${
                   isActive
                     ? 'border-emerald-600 text-emerald-800 font-bold bg-white -mb-px'
                     : 'border-transparent text-slate-500 hover:text-slate-800'
                 }`}
               >
                 <Icon className="w-4 h-4" />
-                <span>{tab.label}</span>
+                <span className="sm:hidden">{tab.label}</span>
+                <span className="hidden sm:inline">{tab.fullLabel}</span>
               </button>
             );
           })}

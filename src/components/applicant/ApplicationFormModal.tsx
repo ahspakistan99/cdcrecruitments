@@ -204,10 +204,10 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-150">
-      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 flex flex-col">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 md:p-6 animate-in fade-in duration-150">
+      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 flex flex-col">
         {/* Header */}
-        <div className="sticky top-0 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-slate-100 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-3.5 border-b border-slate-100 flex items-center justify-between z-10">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
@@ -215,13 +215,14 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
               </span>
               <span className="text-xs text-slate-400">Islamabad Campus</span>
             </div>
-            <h2 className="text-xl font-bold text-slate-900 font-['Outfit'] mt-0.5">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900 font-['Outfit'] mt-0.5">
               {submittedTrackingId ? 'Application Confirmation' : 'Hospital Job Application Form'}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            aria-label="Close application form"
           >
             <X className="w-5 h-5" />
           </button>
@@ -229,13 +230,13 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
 
         {/* Success / Confirmation Screen */}
         {submittedTrackingId ? (
-          <div className="p-8 text-center space-y-6 flex-1 flex flex-col items-center justify-center">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner ring-8 ring-emerald-50">
-              <CheckCircle2 className="w-10 h-10" />
+          <div className="p-5 sm:p-8 text-center space-y-5 sm:space-y-6 flex-1 flex flex-col items-center justify-center">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner ring-8 ring-emerald-50">
+              <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10" />
             </div>
 
-            <div className="space-y-2 max-w-md">
-              <h3 className="text-2xl font-extrabold text-slate-900 font-['Outfit']">
+            <div className="space-y-1.5 sm:space-y-2 max-w-md">
+              <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 font-['Outfit']">
                 Application Successfully Submitted!
               </h3>
               <p className="text-xs sm:text-sm text-slate-600">
@@ -246,30 +247,30 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
 
             {/* Tracking ID Callout */}
             <div className="p-4 bg-slate-900 text-white rounded-2xl w-full max-w-md space-y-2 border border-slate-800 shadow-lg">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+              <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
                 Your Official Application Tracking ID
               </span>
-              <div className="flex items-center justify-center gap-3">
-                <span className="text-2xl sm:text-3xl font-mono font-bold text-emerald-400 tracking-wider">
+              <div className="flex items-center justify-center gap-2 sm:gap-3">
+                <span className="text-xl sm:text-3xl font-mono font-bold text-emerald-400 tracking-wider">
                   {submittedTrackingId}
                 </span>
                 <button
                   onClick={handleCopyTrackingId}
-                  className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                  className="p-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors min-h-[40px] flex items-center justify-center"
                   title="Copy Tracking ID"
                 >
                   {copiedId ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[10px] sm:text-[11px] text-slate-400">
                 Please save this Tracking ID to check status or communicate with HR.
               </p>
             </div>
 
             {/* Next Steps Info */}
-            <div className="p-4 bg-emerald-50/70 rounded-2xl text-left text-xs text-emerald-900 border border-emerald-200/80 w-full max-w-md space-y-2">
+            <div className="p-3.5 sm:p-4 bg-emerald-50/70 rounded-2xl text-left text-xs text-emerald-900 border border-emerald-200/80 w-full max-w-md space-y-1.5 sm:space-y-2">
               <h4 className="font-bold flex items-center gap-1.5 text-emerald-950">
-                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
                 What Happens Next?
               </h4>
               <ul className="space-y-1.5 text-emerald-800 list-disc list-inside">
@@ -280,20 +281,20 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
             </div>
 
             {/* Actions */}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-3 pt-2 w-full max-w-md">
               <button
                 onClick={() => {
                   onClose();
                   onNavigateToTrackerWithId(submittedTrackingId);
                 }}
-                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-md cursor-pointer flex items-center gap-1.5"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-md cursor-pointer flex items-center justify-center gap-1.5 min-h-[44px]"
               >
                 <span>Track Status Now</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
               <button
                 onClick={onClose}
-                className="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors min-h-[44px] flex items-center justify-center cursor-pointer"
               >
                 Close & Return to Jobs
               </button>
@@ -303,16 +304,16 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
           /* Multi-Step Application Form */
           <div className="flex-1 flex flex-col justify-between">
             {/* Step Progress Indicator */}
-            <div className="px-6 py-3 bg-slate-50 border-b border-slate-100">
-              <div className="flex items-center justify-between text-xs font-medium text-slate-500 mb-2">
-                <span className="font-bold text-slate-800">
-                  Step {step} of 4:{' '}
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-50 border-b border-slate-100">
+              <div className="flex items-center justify-between text-xs font-medium text-slate-500 mb-1.5 sm:mb-2">
+                <span className="font-bold text-slate-800 truncate mr-2">
+                  Step {step}/4: {' '}
                   {step === 1 && 'Personal Info'}
                   {step === 2 && 'Qualifications & Licensure'}
-                  {step === 3 && 'Experience & Compensation'}
+                  {step === 3 && 'Experience & Pay'}
                   {step === 4 && 'Documents & Submission'}
                 </span>
-                <span className="text-[11px] text-emerald-600 font-semibold">{Math.round((step / 4) * 100)}% Completed</span>
+                <span className="text-[11px] text-emerald-600 font-semibold shrink-0">{Math.round((step / 4) * 100)}%</span>
               </div>
               <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
                 <div
@@ -323,7 +324,7 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
             </div>
 
             {/* Form Fields */}
-            <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6">
               {/* Step 1: Position & Personal Info */}
               {step === 1 && (
                 <div className="space-y-5 animate-in fade-in duration-200">
@@ -811,21 +812,21 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
               )}
 
               {/* Form Navigation Buttons */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2 sm:gap-3">
                 {step > 1 ? (
                   <button
                     type="button"
                     onClick={handleBack}
-                    className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer min-h-[44px] justify-center"
                   >
                     <ArrowLeft className="w-4 h-4" />
-                    <span>Previous</span>
+                    <span>Back</span>
                   </button>
                 ) : (
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors cursor-pointer min-h-[44px] flex items-center justify-center"
                   >
                     Cancel
                   </button>
@@ -835,7 +836,7 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs hover:shadow-md flex items-center gap-1.5 cursor-pointer"
+                    className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs hover:shadow-md flex items-center gap-1.5 cursor-pointer min-h-[44px] justify-center"
                   >
                     <span>Next: Step {step + 1}</span>
                     <ArrowRight className="w-4 h-4" />
@@ -843,10 +844,10 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
                 ) : (
                   <button
                     type="submit"
-                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                    className="px-5 sm:px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer min-h-[44px] justify-center"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>Submit Job Application</span>
+                    <span>Submit Application</span>
                   </button>
                 )}
               </div>

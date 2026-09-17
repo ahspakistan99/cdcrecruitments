@@ -214,21 +214,21 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
           <button
             onClick={() => exportApplicationsToCSV(filteredApplications)}
-            className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+            className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer min-h-[44px]"
             title="Export currently filtered candidates as CSV spreadsheet"
           >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+            <FileSpreadsheet className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>Export CSV</span>
           </button>
 
           <button
             onClick={onOpenNewJobModal}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-md hover:shadow-lg transition-all cursor-pointer"
+            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg transition-all cursor-pointer min-h-[44px]"
           >
-            <PlusCircle className="w-4 h-4" />
+            <PlusCircle className="w-4 h-4 shrink-0" />
             <span>+ Add Vacancy</span>
           </button>
         </div>
@@ -567,141 +567,255 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
             </button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
-                  <th className="py-3 px-4">Applicant & Tracking ID</th>
-                  <th className="py-3 px-4">Applied Role & Department</th>
-                  <th className="py-3 px-4">Qualification & Council Reg</th>
-                  <th className="py-3 px-4">Experience & Hospital</th>
-                  <th className="py-3 px-4">Expected Salary</th>
-                  <th className="py-3 px-4">Rating</th>
-                  <th className="py-3 px-4">Status & Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-xs">
-                {filteredApplications.map(app => {
-                  const dept = getDepartmentInfo(app.department);
-                  const statusInfo = getStatusBadge(app.status);
+          <div>
+            {/* Mobile Candidate Cards (visible on < lg screens) */}
+            <div className="block lg:hidden divide-y divide-slate-200">
+              {filteredApplications.map(app => {
+                const dept = getDepartmentInfo(app.department);
+                const statusInfo = getStatusBadge(app.status);
 
-                  return (
-                    <tr
-                      key={app.id}
-                      className="hover:bg-slate-50/70 transition-colors group cursor-pointer"
-                      onClick={() => onSelectApplication(app)}
-                    >
-                      {/* Name & ID */}
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0 group-hover:bg-emerald-600 transition-colors">
-                            {app.fullName.charAt(0)}
-                          </div>
-                          <div>
-                            <div className="font-bold text-slate-900 text-sm group-hover:text-emerald-700 transition-colors">
-                              {app.fullName}
-                            </div>
-                            <div className="flex items-center gap-2 mt-0.5 text-[11px] text-slate-500">
-                              <span className="font-mono text-emerald-700 font-semibold">{app.id}</span>
-                              <span>•</span>
-                              <span>{app.city}</span>
-                            </div>
+                return (
+                  <div
+                    key={app.id}
+                    className="p-4 hover:bg-slate-50/80 transition-colors space-y-3 cursor-pointer"
+                    onClick={() => onSelectApplication(app)}
+                  >
+                    {/* Header: Avatar, Name, ID, and Status */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm shrink-0">
+                          {app.fullName.charAt(0)}
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-slate-900 text-sm">
+                            {app.fullName}
+                          </h3>
+                          <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                            <span className="font-mono text-emerald-700 font-semibold">{app.id}</span>
+                            <span>•</span>
+                            <span>{app.city}</span>
                           </div>
                         </div>
-                      </td>
+                      </div>
 
-                      {/* Applied Role */}
-                      <td className="py-3.5 px-4">
-                        <div className="font-bold text-slate-800">{app.jobTitle}</div>
-                        <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold border mt-1 ${dept.badgeColor}`}>
-                          {dept.name}
-                        </span>
-                      </td>
+                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border shrink-0 ${statusInfo.color}`}>
+                        {statusInfo.label}
+                      </span>
+                    </div>
 
-                      {/* Qualification & Registration */}
-                      <td className="py-3.5 px-4 max-w-[200px]">
-                        <div className="font-semibold text-slate-800 truncate" title={app.highestDegree}>
-                          {app.highestDegree}
-                        </div>
-                        {app.registrationNumber ? (
-                          <span className="inline-flex items-center gap-1 font-mono text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded-sm border border-emerald-200 mt-1">
-                            <Award className="w-3 h-3 text-emerald-600" />
-                            {app.registrationNumber}
+                    {/* Job & Dept */}
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="text-xs font-semibold text-slate-800">{app.jobTitle}</span>
+                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-medium border ${dept.badgeColor}`}>
+                        {dept.name}
+                      </span>
+                    </div>
+
+                    {/* Qualification & Experience Grid */}
+                    <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                      <div>
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block">Degree / Council</span>
+                        <span className="text-slate-800 font-medium truncate block">{app.highestDegree}</span>
+                        {app.registrationNumber && (
+                          <span className="text-[10px] font-mono text-emerald-700 font-semibold block">
+                            Reg: {app.registrationNumber}
                           </span>
-                        ) : (
-                          <span className="text-[10px] text-slate-400">Class of {app.passingYear}</span>
                         )}
-                      </td>
+                      </div>
+                      <div>
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block">Experience / Pay</span>
+                        <span className="text-slate-800 font-semibold block">{app.totalExperienceYears} yrs ({app.expectedSalary})</span>
+                        <span className="text-[10px] text-slate-500 truncate block">{app.currentEmployer || 'Fresh'}</span>
+                      </div>
+                    </div>
 
-                      {/* Experience */}
-                      <td className="py-3.5 px-4">
-                        <div className="font-bold text-slate-800">
-                          {app.totalExperienceYears} Year(s)
-                        </div>
-                        <div className="text-[11px] text-slate-500 truncate max-w-[150px]" title={app.currentEmployer}>
-                          {app.currentEmployer || 'Fresh / Private'}
-                        </div>
-                      </td>
-
-                      {/* Expected Salary */}
-                      <td className="py-3.5 px-4">
-                        <span className="font-bold text-emerald-700">{app.expectedSalary}</span>
-                        <div className="text-[10px] text-slate-400 mt-0.5">{app.noticePeriodDays}d Notice</div>
-                      </td>
-
-                      {/* Interactive Rating */}
-                      <td className="py-3.5 px-4" onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center gap-0.5">
-                          {[1, 2, 3, 4, 5].map(star => (
-                            <button
-                              key={star}
-                              onClick={() => onUpdateRating(app.id, star)}
-                              className="cursor-pointer hover:scale-110 transition-transform"
-                              title={`Rate ${star} Stars`}
-                            >
-                              <Star
-                                className={`w-3.5 h-3.5 ${
-                                  star <= app.rating
-                                    ? 'text-amber-400 fill-amber-400'
-                                    : 'text-slate-200'
-                                }`}
-                              />
-                            </button>
-                          ))}
-                        </div>
-                      </td>
-
-                      {/* Status quick select & actions */}
-                      <td className="py-3.5 px-4" onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center gap-2">
-                          <select
-                            value={app.status}
-                            onChange={e => onUpdateStatus(app.id, e.target.value as ApplicationStatus)}
-                            className={`px-2 py-1 rounded-lg text-[11px] font-bold border transition-colors cursor-pointer ${statusInfo.color}`}
-                          >
-                            <option value="new">New</option>
-                            <option value="under_review">Under Review</option>
-                            <option value="shortlisted">Shortlisted</option>
-                            <option value="interview_scheduled">Interview Scheduled</option>
-                            <option value="offer_extended">Offer Extended</option>
-                            <option value="hired">Hired</option>
-                            <option value="rejected">Not Selected</option>
-                          </select>
-
+                    {/* Bottom Controls: Rating & Quick Status & Dossier */}
+                    <div className="flex items-center justify-between gap-2 pt-1" onClick={e => e.stopPropagation()}>
+                      {/* Rating Stars */}
+                      <div className="flex items-center gap-0.5">
+                        {[1, 2, 3, 4, 5].map(star => (
                           <button
-                            onClick={() => onSelectApplication(app)}
-                            className="p-1.5 rounded-lg border border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-                            title="View Full Candidate Dossier"
+                            key={star}
+                            onClick={() => onUpdateRating(app.id, star)}
+                            className="p-1 cursor-pointer hover:scale-110 transition-transform"
+                            title={`Rate ${star} Stars`}
                           >
-                            <Eye className="w-3.5 h-3.5" />
+                            <Star
+                              className={`w-4 h-4 ${
+                                star <= app.rating ? 'text-amber-400 fill-amber-400' : 'text-slate-200'
+                              }`}
+                            />
                           </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        ))}
+                      </div>
+
+                      {/* Quick Status Select & Button */}
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={app.status}
+                          onChange={e => onUpdateStatus(app.id, e.target.value as ApplicationStatus)}
+                          className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer min-h-[36px] ${statusInfo.color}`}
+                        >
+                          <option value="new">New</option>
+                          <option value="under_review">Under Review</option>
+                          <option value="shortlisted">Shortlist</option>
+                          <option value="interview_scheduled">Interview</option>
+                          <option value="offer_extended">Offer</option>
+                          <option value="hired">Hired</option>
+                          <option value="rejected">Not Selected</option>
+                        </select>
+
+                        <button
+                          onClick={() => onSelectApplication(app)}
+                          className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-semibold flex items-center gap-1 min-h-[36px] cursor-pointer"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Dossier</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Candidate Table (visible on lg+ screens) */}
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                    <th className="py-3 px-4">Applicant & Tracking ID</th>
+                    <th className="py-3 px-4">Applied Role & Department</th>
+                    <th className="py-3 px-4">Qualification & Council Reg</th>
+                    <th className="py-3 px-4">Experience & Hospital</th>
+                    <th className="py-3 px-4">Expected Salary</th>
+                    <th className="py-3 px-4">Rating</th>
+                    <th className="py-3 px-4">Status & Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-xs">
+                  {filteredApplications.map(app => {
+                    const dept = getDepartmentInfo(app.department);
+                    const statusInfo = getStatusBadge(app.status);
+
+                    return (
+                      <tr
+                        key={app.id}
+                        className="hover:bg-slate-50/70 transition-colors group cursor-pointer"
+                        onClick={() => onSelectApplication(app)}
+                      >
+                        {/* Name & ID */}
+                        <td className="py-3.5 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0 group-hover:bg-emerald-600 transition-colors">
+                              {app.fullName.charAt(0)}
+                            </div>
+                            <div>
+                              <div className="font-bold text-slate-900 text-sm group-hover:text-emerald-700 transition-colors">
+                                {app.fullName}
+                              </div>
+                              <div className="flex items-center gap-2 mt-0.5 text-[11px] text-slate-500">
+                                <span className="font-mono text-emerald-700 font-semibold">{app.id}</span>
+                                <span>•</span>
+                                <span>{app.city}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Applied Role */}
+                        <td className="py-3.5 px-4">
+                          <div className="font-bold text-slate-800">{app.jobTitle}</div>
+                          <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold border mt-1 ${dept.badgeColor}`}>
+                            {dept.name}
+                          </span>
+                        </td>
+
+                        {/* Qualification & Registration */}
+                        <td className="py-3.5 px-4 max-w-[200px]">
+                          <div className="font-semibold text-slate-800 truncate" title={app.highestDegree}>
+                            {app.highestDegree}
+                          </div>
+                          {app.registrationNumber ? (
+                            <span className="inline-flex items-center gap-1 font-mono text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded-sm border border-emerald-200 mt-1">
+                              <Award className="w-3 h-3 text-emerald-600" />
+                              {app.registrationNumber}
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-slate-400">Class of {app.passingYear}</span>
+                          )}
+                        </td>
+
+                        {/* Experience */}
+                        <td className="py-3.5 px-4">
+                          <div className="font-bold text-slate-800">
+                            {app.totalExperienceYears} Year(s)
+                          </div>
+                          <div className="text-[11px] text-slate-500 truncate max-w-[150px]" title={app.currentEmployer}>
+                            {app.currentEmployer || 'Fresh / Private'}
+                          </div>
+                        </td>
+
+                        {/* Expected Salary */}
+                        <td className="py-3.5 px-4">
+                          <span className="font-bold text-emerald-700">{app.expectedSalary}</span>
+                          <div className="text-[10px] text-slate-400 mt-0.5">{app.noticePeriodDays}d Notice</div>
+                        </td>
+
+                        {/* Interactive Rating */}
+                        <td className="py-3.5 px-4" onClick={e => e.stopPropagation()}>
+                          <div className="flex items-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map(star => (
+                              <button
+                                key={star}
+                                onClick={() => onUpdateRating(app.id, star)}
+                                className="cursor-pointer hover:scale-110 transition-transform"
+                                title={`Rate ${star} Stars`}
+                              >
+                                <Star
+                                  className={`w-3.5 h-3.5 ${
+                                    star <= app.rating
+                                      ? 'text-amber-400 fill-amber-400'
+                                      : 'text-slate-200'
+                                  }`}
+                                />
+                              </button>
+                            ))}
+                          </div>
+                        </td>
+
+                        {/* Status quick select & actions */}
+                        <td className="py-3.5 px-4" onClick={e => e.stopPropagation()}>
+                          <div className="flex items-center gap-2">
+                            <select
+                              value={app.status}
+                              onChange={e => onUpdateStatus(app.id, e.target.value as ApplicationStatus)}
+                              className={`px-2 py-1 rounded-lg text-[11px] font-bold border transition-colors cursor-pointer ${statusInfo.color}`}
+                            >
+                              <option value="new">New</option>
+                              <option value="under_review">Under Review</option>
+                              <option value="shortlisted">Shortlisted</option>
+                              <option value="interview_scheduled">Interview Scheduled</option>
+                              <option value="offer_extended">Offer Extended</option>
+                              <option value="hired">Hired</option>
+                              <option value="rejected">Not Selected</option>
+                            </select>
+
+                            <button
+                              onClick={() => onSelectApplication(app)}
+                              className="p-1.5 rounded-lg border border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+                              title="View Full Candidate Dossier"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
