@@ -1,0 +1,8 @@
+{
+  "name": "CDC/CCIH Islamabad Careers & HR Recruitment Portal",
+  "description": "Official job application portal and HR recruitment management dashboard for CDC/CCIH Hospital & Diagnostic Center, Islamabad.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
