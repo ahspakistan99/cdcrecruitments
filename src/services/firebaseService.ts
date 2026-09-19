@@ -238,7 +238,7 @@ export async function scheduleInterviewInFirestore(
 }
 
 /**
- * Fetch Application by Tracking ID (e.g. CDC-2026-1045)
+ * Fetch Application by Tracking ID (e.g. CCIH-2026-1045)
  */
 export async function getApplicationByTrackingId(
   trackingId: string

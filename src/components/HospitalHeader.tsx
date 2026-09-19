@@ -128,14 +128,14 @@ export const HospitalHeader: React.FC<HospitalHeaderProps> = ({
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-extrabold text-xl tracking-tight text-slate-900 font-['Outfit']">
-                    CDC / CCIH
+                    CCIH
                   </span>
                   <span className="text-[11px] font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full uppercase tracking-wider">
                     Islamabad
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 font-medium">
-                  Capital Diagnostic Centre & Capital Care International Hospital
+                  Capital Care International Hospital (CCIH)
                 </p>
               </div>
             </button>

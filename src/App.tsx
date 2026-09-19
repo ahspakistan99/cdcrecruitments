@@ -132,7 +132,7 @@ export default function App() {
   const handleLogin = async () => {
     try {
       const user = await loginWithGoogle();
-      showToast(`Welcome, ${user.displayName || user.email}! Connected to CDC/CCIH HR.`);
+      showToast(`Welcome, ${user.displayName || user.email}! Connected to Capital Care International Hospital (CCIH) HR.`);
     } catch (err: any) {
       if (err?.code !== 'auth/popup-closed-by-user') {
         showToast('Google Sign-In failed. Please try again.');
@@ -158,9 +158,9 @@ export default function App() {
   const handleSubmitApplication = (
     appData: Omit<JobApplication, 'id' | 'appliedAt' | 'status' | 'rating' | 'hrNotes' | 'tags'>
   ): string => {
-    // Generate tracking ID e.g. CDC-2026-1095
+    // Generate tracking ID e.g. CCIH-2026-1095
     const randomNum = Math.floor(1000 + Math.random() * 9000);
-    const trackingId = `CDC-2026-${randomNum}`;
+    const trackingId = `CCIH-2026-${randomNum}`;
     const now = new Date();
     const appliedAt = `${now.toISOString().split('T')[0]} ${now.toTimeString().slice(0, 5)}`;
 
@@ -205,7 +205,7 @@ export default function App() {
     const randomId = Math.floor(120 + Math.random() * 880);
     const newJob: JobPost = {
       ...newJobData,
-      id: `CDC-JOB-${randomId}`,
+      id: `CCIH-JOB-${randomId}`,
       postedDate: new Date().toISOString().split('T')[0],
       applicantCount: 0,
     };
@@ -335,7 +335,7 @@ export default function App() {
   };
 
   const handleResetData = () => {
-    if (window.confirm('Reset applications and jobs to the original CDC/CCIH hospital demo dataset?')) {
+    if (window.confirm('Reset applications and jobs to the original Capital Care International Hospital (CCIH) demo dataset?')) {
       const reset = resetToDemoData();
       setJobs(reset.jobs);
       setApplications(reset.applications);
@@ -464,11 +464,11 @@ export default function App() {
                   <Stethoscope className="w-5 h-5" />
                 </div>
                 <span className="text-white font-extrabold text-lg tracking-tight font-['Outfit']">
-                  CDC / CCIH Islamabad
+                  Capital Care International Hospital (CCIH)
                 </span>
               </div>
               <p className="text-slate-400 text-xs max-w-md leading-relaxed">
-                Capital Diagnostic Centre & Capital Care International Hospital (CDC/CCIH), Sector G-8 & Blue Area Islamabad. 
+                Capital Care International Hospital (CCIH), Sector G-8 Markaz & Blue Area, Islamabad. 
                 Equipped with automated Pathology Lab, 128-Slice CT, 1.5T MRI, 24/7 Emergency, ICU, and Outpatient Specialties.
               </p>
               <div className="flex flex-wrap items-center gap-4 text-[11px] text-emerald-400">
@@ -479,7 +479,7 @@ export default function App() {
                   <CheckCircle2 className="w-3.5 h-3.5" /> ISO & RIQAS Calibrated Lab
                 </span>
                 <span className="flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> Vercel SPA Compatible
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Modern E-Recruitment Portal
                 </span>
               </div>
             </div>
@@ -511,22 +511,22 @@ export default function App() {
                 </p>
                 <p className="flex items-center gap-1.5">
                   <Mail className="w-3.5 h-3.5 text-emerald-400" />
-                  careers@cdc-ccih.hospital.pk
+                  careers@ccih.hospital.pk
                 </p>
               </div>
             </div>
           </div>
 
           <div className="pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500">
-            <p>© 2026 Capital Diagnostic Centre & Capital Care International Hospital (CCIH) Islamabad. All rights reserved.</p>
+            <p>© 2026 Capital Care International Hospital (CCIH), Islamabad. All rights reserved.</p>
             
             {/* Developer Credit */}
-            <div className="flex items-center gap-2 bg-slate-800/90 border border-slate-700/80 px-3.5 py-1.5 rounded-full text-slate-300">
+            <div className="flex items-center gap-2 bg-slate-800/90 border border-slate-700/80 px-4 py-1.5 rounded-full text-slate-300 shadow-sm">
               <span>Developed by</span>
-              <span className="font-semibold text-white">Imran Yaseen</span>
+              <span className="font-bold text-white">Imran Yaseen</span>
               <a 
                 href="tel:03027563119" 
-                className="text-emerald-400 hover:text-emerald-300 font-mono font-medium underline underline-offset-2 transition-colors"
+                className="text-emerald-400 hover:text-emerald-300 font-mono font-bold underline underline-offset-2 transition-colors ml-1"
                 title="Call 0302-7563119"
               >
                 0302-7563119

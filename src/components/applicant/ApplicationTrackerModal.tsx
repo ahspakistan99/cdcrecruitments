@@ -112,7 +112,7 @@ export const ApplicationTrackerModal: React.FC<ApplicationTrackerModalProps> = (
           Track Your Job Application Status
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 max-w-lg mx-auto">
-          Enter your Application Tracking ID (e.g. <code>CDC-2026-1081</code>) or your registered 13-digit CNIC to view
+          Enter your Application Tracking ID (e.g. <code>CCIH-2026-1081</code>) or your registered 13-digit CNIC to view
           current review progress and interview calls.
         </p>
       </div>
@@ -126,7 +126,7 @@ export const ApplicationTrackerModal: React.FC<ApplicationTrackerModalProps> = (
               type="text"
               value={query}
               onChange={e => setQuery(e.target.value)}
-              placeholder="Enter Tracking ID (CDC-2026-...) or CNIC..."
+              placeholder="Enter Tracking ID (CCIH-2026-...) or CNIC..."
               className="flex-1 px-2 py-2.5 text-base sm:text-sm focus:outline-none bg-transparent min-h-[44px]"
             />
           </div>

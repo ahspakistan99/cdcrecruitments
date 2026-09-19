@@ -63,6 +63,9 @@
         "hasCnicCopy": { "type": "boolean" },
         "hasDegreeCopy": { "type": "boolean" },
         "hasLicenseCopy": { "type": "boolean" },
+        "educationList": { "type": "array" },
+        "experienceList": { "type": "array" },
+        "interviewDetails": { "type": "object" },
         "status": { "type": "string", "maxLength": 32 },
         "rating": { "type": "number" },
         "tags": { "type": "array" }

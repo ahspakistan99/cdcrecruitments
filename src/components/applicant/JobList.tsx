@@ -87,7 +87,7 @@ export const JobList: React.FC<JobListProps> = ({
           </div>
 
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight font-['Outfit'] leading-tight">
-            Build Your Clinical & Diagnostic Career at <span className="text-emerald-400">CDC / Capital Care International Hospital</span>
+            Build Your Clinical & Diagnostic Career at <span className="text-emerald-400">Capital Care International Hospital (CCIH)</span>
           </h1>
 
           <p className="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed">
@@ -243,7 +243,7 @@ export const JobList: React.FC<JobListProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h2 className="text-lg sm:text-xl font-bold text-slate-900 font-['Outfit']">
-            Available Positions at CDC & Capital Care International Hospital (CCIH), Islamabad
+            Available Positions at Capital Care International Hospital (CCIH), Islamabad
           </h2>
           <p className="text-xs text-slate-500">
             Showing {filteredJobs.length} active vacancies matching your criteria

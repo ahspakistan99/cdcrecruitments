@@ -204,7 +204,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
             <span className="text-[11px] font-bold uppercase tracking-wider bg-slate-900 text-white px-2.5 py-0.5 rounded-md">
               Hospital Executive HR
             </span>
-            <span className="text-xs text-slate-500 font-medium">Capital Care International Hospital (CCIH) & CDC Islamabad</span>
+            <span className="text-xs text-slate-500 font-medium">Capital Care International Hospital (CCIH), Islamabad</span>
             <a 
               href="tel:03027563119"
               className="inline-flex items-center gap-1 text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md hover:bg-emerald-100 transition-colors ml-auto sm:ml-0"
@@ -319,7 +319,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
             <div className="flex items-center gap-2">
               <CalendarCheck className="w-5 h-5 text-purple-300" />
               <h3 className="text-sm font-bold font-['Outfit'] tracking-wide">
-                Upcoming Panel Interviews (CDC Boardroom, Islamabad)
+                Upcoming Panel Interviews (CCIH Boardroom, Islamabad)
               </h3>
             </div>
             <span className="text-xs text-purple-200 font-semibold">

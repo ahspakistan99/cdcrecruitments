@@ -16,9 +16,14 @@ import {
   User,
   GraduationCap,
   Briefcase,
-  FileCheck
+  FileCheck,
+  Plus,
+  Trash2,
+  Layers,
+  Award,
+  Clock
 } from 'lucide-react';
-import { JobPost, JobApplication } from '../../types';
+import { JobPost, JobApplication, EducationEntry, ExperienceEntry, EducationLevel } from '../../types';
 import { formatCNIC, formatPhone, getDepartmentInfo } from '../../utils/formatters';
 
 interface ApplicationFormModalProps {
@@ -43,7 +48,7 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
   const [step, setStep] = useState<number>(1);
   const [selectedJobId, setSelectedJobId] = useState<string>(initialJob?.id || (allJobs[0]?.id ?? ''));
 
-  // Form fields
+  // Form fields - Step 1
   const [fullName, setFullName] = useState('');
   const [fatherOrHusbandName, setFatherOrHusbandName] = useState('');
   const [cnic, setCnic] = useState('');
@@ -54,22 +59,56 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
   const [city, setCity] = useState('Islamabad');
   const [address, setAddress] = useState('');
 
-  // Education & License
-  const [highestDegree, setHighestDegree] = useState('BS Medical Laboratory Technology (BSc MLT)');
+  // Step 2: Multi-tier Addable Education & Professional Licensure
+  const [educationList, setEducationList] = useState<EducationEntry[]>([
+    {
+      id: 'edu-1',
+      level: 'SSC / Matric',
+      degreeName: 'Matriculation (Science)',
+      passingYear: '2016',
+      boardOrUniversity: 'FBISE Islamabad',
+      gradeOrCgpa: 'A+ / 86%'
+    },
+    {
+      id: 'edu-2',
+      level: 'HSSC / Intermediate / FSc / FA',
+      degreeName: 'F.Sc Pre-Medical',
+      passingYear: '2018',
+      boardOrUniversity: 'FBISE Islamabad',
+      gradeOrCgpa: 'A / 82%'
+    },
+    {
+      id: 'edu-3',
+      level: 'BS / 16 Years of Education',
+      degreeName: 'BS Medical Laboratory Technology',
+      passingYear: '2022',
+      boardOrUniversity: 'SZABMU / PIMS Islamabad',
+      gradeOrCgpa: '3.75 CGPA'
+    }
+  ]);
   const [specialization, setSpecialization] = useState('');
-  const [institution, setInstitution] = useState('');
-  const [passingYear, setPassingYear] = useState('2022');
   const [registrationNumber, setRegistrationNumber] = useState('');
 
-  // Experience
+  // Step 3: Multi-tier Addable Experience & Compensation
+  const [isFreshGraduate, setIsFreshGraduate] = useState(false);
+  const [experienceList, setExperienceList] = useState<ExperienceEntry[]>([
+    {
+      id: 'exp-1',
+      organization: 'Capital Care International Hospital (CCIH)',
+      designation: 'Medical Laboratory Technologist',
+      department: 'Pathology & Hematology Unit',
+      startDate: '2022-07',
+      endDate: 'Present',
+      isCurrent: true,
+      responsibilities: 'Conducted routine diagnostic testing, automated hematology and clinical biochemistry analyzers calibration, and internal quality controls.'
+    }
+  ]);
   const [totalExperienceYears, setTotalExperienceYears] = useState<number>(2);
-  const [currentEmployer, setCurrentEmployer] = useState('');
-  const [currentDesignation, setCurrentDesignation] = useState('');
   const [currentSalary, setCurrentSalary] = useState('');
   const [expectedSalary, setExpectedSalary] = useState('PKR 85,000');
   const [noticePeriodDays, setNoticePeriodDays] = useState<number>(15);
 
-  // Documents
+  // Documents - Step 4
   const [resumeFileName, setResumeFileName] = useState('');
   const [resumeFileSize, setResumeFileSize] = useState('');
   const [coverLetter, setCoverLetter] = useState('');
@@ -84,6 +123,51 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
 
   const currentJob = allJobs.find(j => j.id === selectedJobId) || allJobs[0];
   const dept = currentJob ? getDepartmentInfo(currentJob.department) : null;
+
+  // Education Helpers
+  const handleAddEducation = (presetLevel?: EducationLevel, presetDegree = '') => {
+    const newEntry: EducationEntry = {
+      id: `edu-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      level: presetLevel || 'BS / 16 Years of Education',
+      degreeName: presetDegree,
+      passingYear: new Date().getFullYear().toString(),
+      boardOrUniversity: '',
+      gradeOrCgpa: ''
+    };
+    setEducationList(prev => [...prev, newEntry]);
+  };
+
+  const handleRemoveEducation = (id: string) => {
+    if (educationList.length <= 1) return;
+    setEducationList(prev => prev.filter(e => e.id !== id));
+  };
+
+  const handleUpdateEducation = (id: string, field: keyof EducationEntry, val: string) => {
+    setEducationList(prev => prev.map(item => item.id === id ? { ...item, [field]: val } : item));
+  };
+
+  // Experience Helpers
+  const handleAddExperience = () => {
+    const newExp: ExperienceEntry = {
+      id: `exp-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      organization: '',
+      designation: '',
+      department: '',
+      startDate: '',
+      endDate: 'Present',
+      isCurrent: true,
+      responsibilities: ''
+    };
+    setExperienceList(prev => [...prev, newExp]);
+  };
+
+  const handleRemoveExperience = (id: string) => {
+    setExperienceList(prev => prev.filter(e => e.id !== id));
+  };
+
+  const handleUpdateExperience = (id: string, field: keyof ExperienceEntry, val: any) => {
+    setExperienceList(prev => prev.map(item => item.id === id ? { ...item, [field]: val } : item));
+  };
 
   // Step Validations
   const validateStep = (currentStep: number): boolean => {
@@ -102,14 +186,26 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
     }
 
     if (currentStep === 2) {
-      if (!highestDegree.trim()) errors.highestDegree = 'Please specify highest qualification';
-      if (!institution.trim()) errors.institution = 'Institute / University name is required';
+      if (educationList.length === 0) {
+        errors.education = 'Please add at least one educational qualification';
+      } else {
+        const incomplete = educationList.some(e => !e.degreeName.trim() || !e.boardOrUniversity.trim());
+        if (incomplete) {
+          errors.education = 'Please fill degree name and board/university for all listed qualifications';
+        }
+      }
       if (currentJob?.licenseRequired && !registrationNumber.trim()) {
         errors.registrationNumber = `Registration number required for this medical role (${currentJob.licenseRequired})`;
       }
     }
 
     if (currentStep === 3) {
+      if (!isFreshGraduate && experienceList.length > 0) {
+        const incomplete = experienceList.some(e => !e.organization.trim() || !e.designation.trim());
+        if (incomplete) {
+          errors.experience = 'Please specify employer/hospital name and job title for each experience entry';
+        }
+      }
       if (!expectedSalary.trim()) errors.expectedSalary = 'Please state expected monthly salary';
     }
 
@@ -147,7 +243,7 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
 
   const handleSimulateQuickCV = () => {
     const sanitizedName = fullName.replace(/\s+/g, '_') || 'Applicant';
-    setResumeFileName(`${sanitizedName}_CV_CDC_Islamabad.pdf`);
+    setResumeFileName(`${sanitizedName}_CV_CCIH_Islamabad.pdf`);
     setResumeFileSize('1.4 MB');
     if (formErrors.resumeFileName) {
       setFormErrors(prev => ({ ...prev, resumeFileName: '' }));
@@ -159,6 +255,17 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
     if (!validateStep(4)) return;
 
     if (!currentJob) return;
+
+    // Determine highest degree and institute from top qualification entry
+    const primaryEdu = educationList[educationList.length - 1] || educationList[0];
+    const highestDegreeName = primaryEdu ? `${primaryEdu.degreeName} (${primaryEdu.level})` : 'Undergraduate';
+    const institutionName = primaryEdu ? primaryEdu.boardOrUniversity : '';
+    const passingYearValue = primaryEdu ? primaryEdu.passingYear : '';
+
+    // Determine current employer and designation
+    const activeExp = experienceList.find(e => e.isCurrent) || experienceList[0];
+    const employerName = isFreshGraduate ? 'Fresh Graduate' : (activeExp ? activeExp.organization : '');
+    const designationName = isFreshGraduate ? 'Entry Level' : (activeExp ? activeExp.designation : '');
 
     const trackingId = onSubmitApplication({
       jobId: currentJob.id,
@@ -173,17 +280,19 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
       phone,
       city,
       address,
-      highestDegree,
-      specialization,
-      institution,
-      passingYear,
+      highestDegree: highestDegreeName,
+      specialization: specialization || primaryEdu?.degreeName || '',
+      institution: institutionName,
+      passingYear: passingYearValue,
       registrationNumber,
-      totalExperienceYears,
-      currentEmployer,
-      currentDesignation,
+      educationList,
+      totalExperienceYears: isFreshGraduate ? 0 : totalExperienceYears,
+      currentEmployer: employerName,
+      currentDesignation: designationName,
       currentSalary,
       expectedSalary,
       noticePeriodDays,
+      experienceList: isFreshGraduate ? [] : experienceList,
       resumeFileName: resumeFileName || `${fullName.replace(/\s+/g, '_')}_Resume.pdf`,
       resumeFileSize: resumeFileSize || '1.2 MB',
       coverLetter,
@@ -495,198 +604,470 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
                 </div>
               )}
 
-              {/* Step 2: Qualifications & Licensure */}
+              {/* Step 2: Multi-tier Addable Qualifications (SSC, HSSC, BS, M.Phil, PhD) */}
               {step === 2 && (
                 <div className="space-y-5 animate-in fade-in duration-200">
-                  <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-100 pb-2">
-                    <GraduationCap className="w-4 h-4 text-emerald-600" />
-                    Academic Degrees & Professional Licensure
-                  </h3>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Highest Qualification / Degree <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={highestDegree}
-                        onChange={e => setHighestDegree(e.target.value)}
-                        placeholder="e.g. MBBS, FCPS Histopathology, BS MLT, Pharm-D, BSc Nursing, ACCA, MBA"
-                        className={`w-full px-3 py-2 rounded-xl border text-sm ${
-                          formErrors.highestDegree ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
-                        } focus:ring-2 focus:ring-emerald-500`}
-                      />
-                      {formErrors.highestDegree && (
-                        <p className="text-[11px] text-rose-500 mt-1">{formErrors.highestDegree}</p>
-                      )}
-                    </div>
-
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 pb-3">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Major Field / Specialization
-                      </label>
-                      <input
-                        type="text"
-                        value={specialization}
-                        onChange={e => setSpecialization(e.target.value)}
-                        placeholder="e.g. Hematology, MRI Imaging, Critical Care, Finance"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Passing / Completion Year
-                      </label>
-                      <input
-                        type="text"
-                        value={passingYear}
-                        onChange={e => setPassingYear(e.target.value)}
-                        placeholder="e.g. 2021"
-                        maxLength={4}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500"
-                      />
-                    </div>
-
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        University / College / Board Name <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={institution}
-                        onChange={e => setInstitution(e.target.value)}
-                        placeholder="e.g. CPSP, UHS Lahore, SZABMU / PIMS Islamabad, QAU, NUST, etc."
-                        className={`w-full px-3 py-2 rounded-xl border text-sm ${
-                          formErrors.institution ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
-                        } focus:ring-2 focus:ring-emerald-500`}
-                      />
-                      {formErrors.institution && (
-                        <p className="text-[11px] text-rose-500 mt-1">{formErrors.institution}</p>
-                      )}
-                    </div>
-
-                    {/* Regulatory Licensure block */}
-                    <div className="sm:col-span-2 p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-                      <label className="block text-xs font-bold text-slate-800">
-                        Regulatory Council Registration Number (PMDC / PMC / PNC / Pharmacy Council / ACCA)
-                      </label>
-                      <input
-                        type="text"
-                        value={registrationNumber}
-                        onChange={e => setRegistrationNumber(e.target.value)}
-                        placeholder="e.g. PMDC-49281-S or PNC-NR-51928 or N/A for administrative roles"
-                        className={`w-full px-3 py-2 rounded-xl border text-sm font-mono ${
-                          formErrors.registrationNumber ? 'border-rose-400 bg-rose-50' : 'border-slate-300'
-                        } bg-white focus:ring-2 focus:ring-emerald-500`}
-                      />
-                      {formErrors.registrationNumber && (
-                        <p className="text-[11px] text-rose-500">{formErrors.registrationNumber}</p>
-                      )}
-                      <p className="text-[11px] text-slate-500">
-                        Mandatory for medical doctors, specialists, nurses, laboratory technologists, and pharmacists.
+                      <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                        <GraduationCap className="w-4 h-4 text-emerald-600" />
+                        Academic Degrees & Qualifications
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Add qualifications from SSC (Matric), HSSC (Intermediate), BS/16-Yr, to M.Phil and PhD.
                       </p>
                     </div>
+
+                    {/* Quick Add Presets */}
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="text-[11px] font-semibold text-slate-500 mr-1">Quick Add:</span>
+                      <button
+                        type="button"
+                        onClick={() => handleAddEducation('SSC / Matric', 'Matriculation (Science)')}
+                        className="px-2 py-1 text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 rounded-lg border border-slate-200 transition-colors"
+                      >
+                        + SSC
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAddEducation('HSSC / Intermediate / FSc / FA', 'F.Sc Pre-Medical')}
+                        className="px-2 py-1 text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 rounded-lg border border-slate-200 transition-colors"
+                      >
+                        + HSSC
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAddEducation('BS / 16 Years of Education', 'BS / Bachelor')}
+                        className="px-2 py-1 text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 rounded-lg border border-slate-200 transition-colors"
+                      >
+                        + BS (16-Yr)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAddEducation('M.Phil / MS / 18 Years', 'M.Phil / Master')}
+                        className="px-2 py-1 text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 rounded-lg border border-slate-200 transition-colors"
+                      >
+                        + M.Phil
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAddEducation('PhD / Doctorate', 'Doctor of Philosophy (PhD)')}
+                        className="px-2 py-1 text-[11px] font-medium bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 rounded-lg border border-slate-200 transition-colors"
+                      >
+                        + PhD
+                      </button>
+                    </div>
+                  </div>
+
+                  {formErrors.education && (
+                    <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2 text-rose-700 text-xs">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>{formErrors.education}</span>
+                    </div>
+                  )}
+
+                  {/* List of Education Cards */}
+                  <div className="space-y-4">
+                    {educationList.map((edu, idx) => (
+                      <div
+                        key={edu.id}
+                        className="p-4 bg-slate-50/70 hover:bg-slate-50 rounded-2xl border border-slate-200/90 transition-all space-y-3 relative group"
+                      >
+                        <div className="flex items-center justify-between border-b border-slate-200/60 pb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-bold flex items-center justify-center">
+                              {idx + 1}
+                            </span>
+                            <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                              {edu.level}
+                            </span>
+                          </div>
+                          {educationList.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveEducation(edu.id)}
+                              className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1 rounded-md transition-colors text-xs flex items-center gap-1"
+                              title="Remove this qualification"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span className="hidden sm:inline text-[11px]">Remove</span>
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
+                          {/* Qualification Level Dropdown */}
+                          <div className="sm:col-span-4">
+                            <label className="block font-semibold text-slate-700 mb-1">
+                              Qualification Level <span className="text-rose-500">*</span>
+                            </label>
+                            <select
+                              value={edu.level}
+                              onChange={e => handleUpdateEducation(edu.id, 'level', e.target.value)}
+                              className="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:ring-2 focus:ring-emerald-500"
+                            >
+                              <option value="SSC / Matric">SSC / Matric (10 Years)</option>
+                              <option value="HSSC / Intermediate / FSc / FA">HSSC / Intermediate / FSc / FA (12 Years)</option>
+                              <option value="BS / 16 Years of Education">BS / 16 Years of Education (MBBS/BSc/Pharm-D)</option>
+                              <option value="M.Phil / MS / 18 Years">M.Phil / MS / 18 Years (Postgraduate)</option>
+                              <option value="PhD / Doctorate">PhD / Doctorate (Terminal Degree)</option>
+                              <option value="Diploma / Certification">Diploma / Clinical Certification</option>
+                              <option value="Other">Other Academic Certification</option>
+                            </select>
+                          </div>
+
+                          {/* Degree Name Input */}
+                          <div className="sm:col-span-5">
+                            <label className="block font-semibold text-slate-700 mb-1">
+                              Degree / Certificate Name <span className="text-rose-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={edu.degreeName}
+                              onChange={e => handleUpdateEducation(edu.id, 'degreeName', e.target.value)}
+                              placeholder="e.g. Matric Science, FSc Pre-Medical, BS MLT, MBBS, M.Phil"
+                              className="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:ring-2 focus:ring-emerald-500"
+                            />
+                          </div>
+
+                          {/* Passing Year */}
+                          <div className="sm:col-span-3">
+                            <label className="block font-semibold text-slate-700 mb-1">
+                              Passing Year <span className="text-rose-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              maxLength={4}
+                              value={edu.passingYear}
+                              onChange={e => handleUpdateEducation(edu.id, 'passingYear', e.target.value)}
+                              placeholder="e.g. 2021"
+                              className="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:ring-2 focus:ring-emerald-500"
+                            />
+                          </div>
+
+                          {/* Board / University */}
+                          <div className="sm:col-span-8">
+                            <label className="block font-semibold text-slate-700 mb-1">
+                              Board / University / Institute <span className="text-rose-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={edu.boardOrUniversity}
+                              onChange={e => handleUpdateEducation(edu.id, 'boardOrUniversity', e.target.value)}
+                              placeholder="e.g. FBISE Islamabad, BISE Rawalpindi, SZABMU / PIMS, QAU, CPSP"
+                              className="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:ring-2 focus:ring-emerald-500"
+                            />
+                          </div>
+
+                          {/* Grade / CGPA */}
+                          <div className="sm:col-span-4">
+                            <label className="block font-semibold text-slate-700 mb-1">
+                              Grade / CGPA / Marks %
+                            </label>
+                            <input
+                              type="text"
+                              value={edu.gradeOrCgpa || ''}
+                              onChange={e => handleUpdateEducation(edu.id, 'gradeOrCgpa', e.target.value)}
+                              placeholder="e.g. 3.8 CGPA, A+, 85%"
+                              className="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:ring-2 focus:ring-emerald-500"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Add Qualification Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleAddEducation()}
+                    className="w-full py-2.5 px-4 rounded-xl border-2 border-dashed border-emerald-300 hover:border-emerald-500 bg-emerald-50/40 hover:bg-emerald-50 text-emerald-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Another Educational Qualification</span>
+                  </button>
+
+                  {/* Professional Council Licensure Block */}
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                    <label className="block text-xs font-bold text-slate-800">
+                      Regulatory Council Registration Number (PMDC / PMC / PNC / Pharmacy Council / ACCA)
+                    </label>
+                    <input
+                      type="text"
+                      value={registrationNumber}
+                      onChange={e => setRegistrationNumber(e.target.value)}
+                      placeholder="e.g. PMDC-49281-S or PNC-NR-51928 or N/A for administrative roles"
+                      className={`w-full px-3 py-2 rounded-xl border text-sm font-mono ${
+                        formErrors.registrationNumber ? 'border-rose-400 bg-rose-50' : 'border-slate-300'
+                      } bg-white focus:ring-2 focus:ring-emerald-500`}
+                    />
+                    {formErrors.registrationNumber && (
+                      <p className="text-[11px] text-rose-500">{formErrors.registrationNumber}</p>
+                    )}
+                    <p className="text-[11px] text-slate-500">
+                      Mandatory for medical doctors, consultants, charge nurses, laboratory technologists, and pharmacists.
+                    </p>
                   </div>
                 </div>
               )}
 
-              {/* Step 3: Work Experience & Compensation */}
+              {/* Step 3: Multi-tier Addable Work Experience & Compensation */}
               {step === 3 && (
                 <div className="space-y-5 animate-in fade-in duration-200">
-                  <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-100 pb-2">
-                    <Briefcase className="w-4 h-4 text-emerald-600" />
-                    Employment History & Compensation Expectations
-                  </h3>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 pb-3">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Total Professional Experience (Years)
-                      </label>
-                      <input
-                        type="number"
-                        min={0}
-                        max={40}
-                        value={totalExperienceYears}
-                        onChange={e => setTotalExperienceYears(Number(e.target.value))}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500"
-                      />
+                      <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                        <Briefcase className="w-4 h-4 text-emerald-600" />
+                        Employment & Work Experience
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Detail your previous hospital, clinical, laboratory, or administrative roles.
+                      </p>
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Current Designation / Role
-                      </label>
+                    {/* Fresh Graduate Toggle */}
+                    <label className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200/80 rounded-xl cursor-pointer select-none text-xs font-semibold text-slate-700 border border-slate-200 transition-colors">
                       <input
-                        type="text"
-                        value={currentDesignation}
-                        onChange={e => setCurrentDesignation(e.target.value)}
-                        placeholder="e.g. Medical Officer / Staff Nurse / Lab Tech"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500"
+                        type="checkbox"
+                        checked={isFreshGraduate}
+                        onChange={e => setIsFreshGraduate(e.target.checked)}
+                        className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500"
                       />
-                    </div>
+                      <span>Fresh Graduate / No Prior Experience</span>
+                    </label>
+                  </div>
 
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Current Hospital or Employer Name
-                      </label>
-                      <input
-                        type="text"
-                        value={currentEmployer}
-                        onChange={e => setCurrentEmployer(e.target.value)}
-                        placeholder="e.g. Shifa International / PIMS / Chughtai Lab / Kulsum Hospital"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500"
-                      />
+                  {formErrors.experience && (
+                    <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2 text-rose-700 text-xs">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>{formErrors.experience}</span>
                     </div>
+                  )}
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Current Monthly Salary (PKR)
-                      </label>
-                      <input
-                        type="text"
-                        value={currentSalary}
-                        onChange={e => setCurrentSalary(e.target.value)}
-                        placeholder="e.g. PKR 65,000"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500"
-                      />
+                  {isFreshGraduate ? (
+                    <div className="p-5 bg-blue-50/70 border border-blue-200 rounded-2xl text-center space-y-2">
+                      <Sparkles className="w-6 h-6 text-blue-600 mx-auto" />
+                      <h4 className="text-xs font-bold text-blue-900 uppercase tracking-wider">
+                        Applying as Fresh Graduate / Entry Level
+                      </h4>
+                      <p className="text-xs text-blue-700 max-w-md mx-auto">
+                        Prior professional hospital experience is marked as waived. Capital Care International Hospital provides structured on-the-job clinical and administrative orientation for newly qualified professionals.
+                      </p>
                     </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* List of Addable Experience Cards */}
+                      {experienceList.map((exp, idx) => (
+                        <div
+                          key={exp.id}
+                          className="p-4 bg-slate-50/70 hover:bg-slate-50 rounded-2xl border border-slate-200 transition-all space-y-3"
+                        >
+                          <div className="flex items-center justify-between border-b border-slate-200/60 pb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-bold flex items-center justify-center">
+                                {idx + 1}
+                              </span>
+                              <span className="text-xs font-bold text-slate-800">
+                                {exp.organization ? exp.organization : `Experience Record #${idx + 1}`}
+                              </span>
+                              {exp.isCurrent && (
+                                <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                                  Current Role
+                                </span>
+                              )}
+                            </div>
+                            {experienceList.length > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveExperience(exp.id)}
+                                className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1 rounded-md transition-colors text-xs flex items-center gap-1"
+                                title="Remove this experience record"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span className="hidden sm:inline text-[11px]">Remove</span>
+                              </button>
+                            )}
+                          </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Expected Monthly Salary (PKR) <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={expectedSalary}
-                        onChange={e => setExpectedSalary(e.target.value)}
-                        placeholder="e.g. PKR 90,000"
-                        className={`w-full px-3 py-2 rounded-xl border text-sm ${
-                          formErrors.expectedSalary ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
-                        } focus:ring-2 focus:ring-emerald-500`}
-                      />
-                      {formErrors.expectedSalary && (
-                        <p className="text-[11px] text-rose-500 mt-1">{formErrors.expectedSalary}</p>
-                      )}
-                    </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div>
+                              <label className="block font-semibold text-slate-700 mb-1">
+                                Hospital / Clinic / Employer Name <span className="text-rose-500">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={exp.organization}
+                                onChange={e => handleUpdateExperience(exp.id, 'organization', e.target.value)}
+                                placeholder="e.g. PIMS Islamabad, Shifa International, Capital Care International Hospital (CCIH)"
+                                className="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:ring-2 focus:ring-emerald-500"
+                              />
+                            </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Required Notice Period (Days)
-                      </label>
-                      <select
-                        value={noticePeriodDays}
-                        onChange={e => setNoticePeriodDays(Number(e.target.value))}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500"
+                            <div>
+                              <label className="block font-semibold text-slate-700 mb-1">
+                                Designation / Role Title <span className="text-rose-500">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={exp.designation}
+                                onChange={e => handleUpdateExperience(exp.id, 'designation', e.target.value)}
+                                placeholder="e.g. Medical Officer, Charge Nurse, Lab Technologist"
+                                className="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:ring-2 focus:ring-emerald-500"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block font-semibold text-slate-700 mb-1">
+                                Department / Specialty
+                              </label>
+                              <input
+                                type="text"
+                                value={exp.department || ''}
+                                onChange={e => handleUpdateExperience(exp.id, 'department', e.target.value)}
+                                placeholder="e.g. Emergency & Trauma, Pathology Lab, ICU"
+                                className="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:ring-2 focus:ring-emerald-500"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block font-semibold text-slate-700 mb-1">
+                                Duration / Timeline
+                              </label>
+                              <div className="grid grid-cols-2 gap-2">
+                                <input
+                                  type="text"
+                                  value={exp.startDate}
+                                  onChange={e => handleUpdateExperience(exp.id, 'startDate', e.target.value)}
+                                  placeholder="Start (e.g. 2021)"
+                                  className="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:ring-2 focus:ring-emerald-500"
+                                />
+                                <input
+                                  type="text"
+                                  disabled={exp.isCurrent}
+                                  value={exp.isCurrent ? 'Present' : exp.endDate}
+                                  onChange={e => handleUpdateExperience(exp.id, 'endDate', e.target.value)}
+                                  placeholder="End (e.g. 2023)"
+                                  className={`w-full px-2.5 py-1.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 ${
+                                    exp.isCurrent ? 'bg-slate-100 text-slate-500' : 'bg-white'
+                                  }`}
+                                />
+                              </div>
+                              <label className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] text-slate-600 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={!!exp.isCurrent}
+                                  onChange={e => {
+                                    const checked = e.target.checked;
+                                    handleUpdateExperience(exp.id, 'isCurrent', checked);
+                                    if (checked) {
+                                      handleUpdateExperience(exp.id, 'endDate', 'Present');
+                                    }
+                                  }}
+                                  className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500"
+                                />
+                                <span>I currently work in this role</span>
+                              </label>
+                            </div>
+
+                            <div className="sm:col-span-2">
+                              <label className="block font-semibold text-slate-700 mb-1">
+                                Key Clinical / Professional Responsibilities
+                              </label>
+                              <textarea
+                                rows={2}
+                                value={exp.responsibilities || ''}
+                                onChange={e => handleUpdateExperience(exp.id, 'responsibilities', e.target.value)}
+                                placeholder="Summary of duties, equipment operated, surgeries assisted, or patient load managed..."
+                                className="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:ring-2 focus:ring-emerald-500"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+
+                      {/* Add Experience Button */}
+                      <button
+                        type="button"
+                        onClick={handleAddExperience}
+                        className="w-full py-2.5 px-4 rounded-xl border-2 border-dashed border-emerald-300 hover:border-emerald-500 bg-emerald-50/40 hover:bg-emerald-50 text-emerald-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
                       >
-                        <option value={0}>Immediate Joining (0 Days)</option>
-                        <option value={7}>1 Week (7 Days)</option>
-                        <option value={15}>15 Days</option>
-                        <option value={30}>1 Month (30 Days)</option>
-                        <option value={60}>2 Months (60 Days)</option>
-                      </select>
+                        <Plus className="w-4 h-4" />
+                        <span>Add Another Hospital / Organization Experience</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Compensation and Logistics Grid */}
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                    <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                      Compensation & Availability
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Total Professional Experience
+                        </label>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="number"
+                            min={0}
+                            max={40}
+                            disabled={isFreshGraduate}
+                            value={isFreshGraduate ? 0 : totalExperienceYears}
+                            onChange={e => setTotalExperienceYears(Number(e.target.value))}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 bg-white"
+                          />
+                          <span className="text-xs text-slate-500 font-medium">Years</span>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Current Monthly Salary (PKR)
+                        </label>
+                        <input
+                          type="text"
+                          value={currentSalary}
+                          onChange={e => setCurrentSalary(e.target.value)}
+                          placeholder="e.g. PKR 70,000"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Expected Monthly Salary (PKR) <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={expectedSalary}
+                          onChange={e => setExpectedSalary(e.target.value)}
+                          placeholder="e.g. PKR 95,000"
+                          className={`w-full px-3 py-2 rounded-xl border text-sm ${
+                            formErrors.expectedSalary ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                          } focus:ring-2 focus:ring-emerald-500 bg-white`}
+                        />
+                        {formErrors.expectedSalary && (
+                          <p className="text-[11px] text-rose-500 mt-1">{formErrors.expectedSalary}</p>
+                        )}
+                      </div>
+
+                      <div className="sm:col-span-3">
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Required Notice Period (Availability)
+                        </label>
+                        <select
+                          value={noticePeriodDays}
+                          onChange={e => setNoticePeriodDays(Number(e.target.value))}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 bg-white"
+                        >
+                          <option value={0}>Immediate Joining (0 Days)</option>
+                          <option value={7}>1 Week (7 Days)</option>
+                          <option value={15}>15 Days</option>
+                          <option value={30}>1 Month (30 Days)</option>
+                          <option value={60}>2 Months (60 Days)</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -69,19 +69,19 @@ export const DEPARTMENTS: DepartmentInfo[] = [
 
 export const INITIAL_JOB_POSTS: JobPost[] = [
   {
-    id: 'CDC-JOB-101',
+    id: 'CCIH-JOB-101',
     title: 'Consultant Histopathologist',
     department: 'pathology_lab',
     subUnit: 'Histopathology & Molecular Lab',
     employmentType: 'Full-time',
-    location: 'Capital Care International Hospital (CCIH) & CDC Campus, Sector G-8, Islamabad',
+    location: 'Capital Care International Hospital (CCIH), Sector G-8, Islamabad',
     minExperienceYears: 4,
     experienceLabel: '4+ Years Post-FCPS',
     minQualification: 'FCPS / M.Phil / MRCPath in Histopathology',
     salaryRange: 'PKR 250,000 - 350,000 / month',
     openings: 1,
     deadline: '2026-10-15',
-    description: 'Leading the Histopathology diagnostic section at CDC Diagnostic Center Islamabad. Responsible for gross examination, micro-slide evaluations, biopsy reporting, frozen sections, and immunohistochemistry (IHC).',
+    description: 'Leading the Histopathology diagnostic section at Capital Care International Hospital (CCIH) Islamabad. Responsible for gross examination, micro-slide evaluations, biopsy reporting, frozen sections, and immunohistochemistry (IHC).',
     responsibilities: [
       'Evaluate biopsy and resection specimens with precision and prompt turn-around times (TAT)',
       'Perform and interpret Immunohistochemistry (IHC) and special stains for oncology cases',
@@ -100,12 +100,12 @@ export const INITIAL_JOB_POSTS: JobPost[] = [
     licenseRequired: 'PMDC / PMC Specialist License'
   },
   {
-    id: 'CDC-JOB-102',
+    id: 'CCIH-JOB-102',
     title: 'Senior Medical Lab Technologist (MLT)',
     department: 'pathology_lab',
     subUnit: 'Hematology & Chemical Pathology',
     employmentType: 'Rotational',
-    location: 'CDC Diagnostic Center, Islamabad',
+    location: 'Capital Care International Hospital (CCIH), Islamabad',
     minExperienceYears: 2,
     experienceLabel: '2-4 Years',
     minQualification: 'BS Medical Laboratory Technology (BSc MLT 4 Years)',
@@ -129,12 +129,12 @@ export const INITIAL_JOB_POSTS: JobPost[] = [
     applicantCount: 14
   },
   {
-    id: 'CDC-JOB-103',
+    id: 'CCIH-JOB-103',
     title: 'Phlebotomist & Sample Collection Officer',
     department: 'pathology_lab',
     subUnit: 'Patient Reception & Blood Draw Section',
     employmentType: 'Full-time',
-    location: 'CDC Islamabad & Rawalpindi Satellite Labs',
+    location: 'Capital Care International Hospital (CCIH) & Satellite Labs',
     minExperienceYears: 1,
     experienceLabel: '1+ Year',
     minQualification: 'Diploma in Lab Technology / Phlebotomy Certification',
@@ -158,7 +158,7 @@ export const INITIAL_JOB_POSTS: JobPost[] = [
     applicantCount: 9
   },
   {
-    id: 'CDC-JOB-104',
+    id: 'CCIH-JOB-104',
     title: 'Consultant Radiologist',
     department: 'radiology_imaging',
     subUnit: 'MRI & CT Scan Division',
@@ -189,12 +189,12 @@ export const INITIAL_JOB_POSTS: JobPost[] = [
     licenseRequired: 'PMDC / PMC Valid Specialist License'
   },
   {
-    id: 'CDC-JOB-105',
+    id: 'CCIH-JOB-105',
     title: 'Diagnostic Radiographer (CT / MRI Technologist)',
     department: 'radiology_imaging',
     subUnit: 'Medical Imaging Suite',
     employmentType: 'Full-time',
-    location: 'CDC Diagnostic Center, Islamabad',
+    location: 'Capital Care International Hospital (CCIH), Islamabad',
     minExperienceYears: 2,
     experienceLabel: '2-5 Years',
     minQualification: 'BS Medical Imaging Technology (BS MIT / Radiography)',
@@ -218,7 +218,7 @@ export const INITIAL_JOB_POSTS: JobPost[] = [
     applicantCount: 8
   },
   {
-    id: 'CDC-JOB-106',
+    id: 'CCIH-JOB-106',
     title: 'Medical Officer - Emergency & ICU',
     department: 'hospital_clinical',
     subUnit: 'Accident & Emergency / Critical Care Unit',
@@ -249,7 +249,7 @@ export const INITIAL_JOB_POSTS: JobPost[] = [
     licenseRequired: 'PMDC Permanent Registration'
   },
   {
-    id: 'CDC-JOB-107',
+    id: 'CCIH-JOB-107',
     title: 'Head Staff Nurse - Critical Care / ICU',
     department: 'hospital_nursing',
     subUnit: 'Intensive Care & High Dependency Unit',
@@ -279,7 +279,7 @@ export const INITIAL_JOB_POSTS: JobPost[] = [
     licenseRequired: 'Pakistan Nursing Council (PNC) Active Registration'
   },
   {
-    id: 'CDC-JOB-108',
+    id: 'CCIH-JOB-108',
     title: 'Hospital Pharmacist & Formulary Specialist',
     department: 'hospital_pharmacy',
     subUnit: 'Inpatient Pharmacy & Narcotic Vault',
@@ -309,7 +309,7 @@ export const INITIAL_JOB_POSTS: JobPost[] = [
     licenseRequired: 'Pharmacy Council Category-A License'
   },
   {
-    id: 'CDC-JOB-109',
+    id: 'CCIH-JOB-109',
     title: 'HR Officer - Talent Acquisition & Credentialing',
     department: 'hr_team',
     subUnit: 'Hospital Human Resources Department',
@@ -338,7 +338,7 @@ export const INITIAL_JOB_POSTS: JobPost[] = [
     applicantCount: 18
   },
   {
-    id: 'CDC-JOB-110',
+    id: 'CCIH-JOB-110',
     title: 'Assistant Manager Accounts & Patient Billing',
     department: 'accounts_finance',
     subUnit: 'Finance & Insurance Panel Section',
@@ -367,7 +367,7 @@ export const INITIAL_JOB_POSTS: JobPost[] = [
     applicantCount: 15
   },
   {
-    id: 'CDC-JOB-111',
+    id: 'CCIH-JOB-111',
     title: 'Patient Care & Front Desk Coordinator',
     department: 'admin_support',
     subUnit: 'Main Reception & Customer Experience',
@@ -399,8 +399,8 @@ export const INITIAL_JOB_POSTS: JobPost[] = [
 
 export const INITIAL_APPLICATIONS: JobApplication[] = [
   {
-    id: 'CDC-2026-1081',
-    jobId: 'CDC-JOB-101',
+    id: 'CCIH-2026-1081',
+    jobId: 'CCIH-JOB-101',
     jobTitle: 'Consultant Histopathologist',
     department: 'pathology_lab',
     appliedAt: '2026-09-12 11:30',
@@ -413,6 +413,62 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
     phone: '0333-5182941',
     city: 'Islamabad',
     address: 'House 42, Street 18, Sector F-11/2, Islamabad',
+    educationList: [
+      {
+        id: 'edu-1',
+        level: 'SSC',
+        degreeName: 'Secondary School Certificate (Matric Science)',
+        passingYear: '2005',
+        boardOrUniversity: 'Federal Board of Intermediate & Secondary Education (FBISE)',
+        gradeOrCgpa: 'A-One (91.4%)'
+      },
+      {
+        id: 'edu-2',
+        level: 'HSSC',
+        degreeName: 'Higher Secondary School Certificate (FSc Pre-Medical)',
+        passingYear: '2007',
+        boardOrUniversity: 'Federal Board (FBISE) Islamabad',
+        gradeOrCgpa: 'A-One (88.2%)'
+      },
+      {
+        id: 'edu-3',
+        level: 'BS/16-Years',
+        degreeName: 'Bachelor of Medicine & Bachelor of Surgery (MBBS)',
+        passingYear: '2013',
+        boardOrUniversity: 'King Edward Medical University (KEMU) Lahore',
+        gradeOrCgpa: '1st Division'
+      },
+      {
+        id: 'edu-4',
+        level: 'M.Phil',
+        degreeName: 'FCPS / M.Phil Fellow in Histopathology',
+        passingYear: '2021',
+        boardOrUniversity: 'College of Physicians & Surgeons Pakistan (CPSP) / PIMS',
+        gradeOrCgpa: 'Fellowship Awarded'
+      }
+    ],
+    experienceList: [
+      {
+        id: 'exp-1',
+        organization: 'Islamabad Diagnostic Center',
+        designation: 'Senior Registrar Histopathology',
+        department: 'Surgical Pathology Unit',
+        startDate: '2021-08',
+        endDate: 'Present',
+        isCurrent: true,
+        responsibilities: 'Conducted gross evaluation, frozen section biopsy diagnosis, IHC reporting, and routine gynecological and gastrointestinal pathology sign-offs.'
+      },
+      {
+        id: 'exp-2',
+        organization: 'Pakistan Institute of Medical Sciences (PIMS) Islamabad',
+        designation: 'Postgraduate Clinical Resident',
+        department: 'Department of Histopathology & Cytology',
+        startDate: '2017-01',
+        endDate: '2021-06',
+        isCurrent: false,
+        responsibilities: 'Underwent structured 4-year residency training in biopsy grossing, micro-slide evaluations, autopsy techniques, and cancer staging.'
+      }
+    ],
     highestDegree: 'FCPS Histopathology',
     specialization: 'Surgical Pathology & Immunohistochemistry',
     institution: 'College of Physicians & Surgeons Pakistan (CPSP) / PIMS',
@@ -426,7 +482,7 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
     noticePeriodDays: 30,
     resumeFileName: 'Dr_Ayesha_Farooq_FCPS_CV.pdf',
     resumeFileSize: '2.4 MB',
-    coverLetter: 'I am applying for the Consultant Histopathologist position at CDC Diagnostic Center. With 5 years of post-graduate experience in gastrointestinal, gynecological biopsies, and digital telepathology, I can contribute directly to rapid turnaround times and CAP accreditation standards.',
+    coverLetter: 'I am applying for the Consultant Histopathologist position at Capital Care International Hospital (CCIH). With 5 years of post-graduate experience in gastrointestinal, gynecological biopsies, and digital telepathology, I can contribute directly to rapid turnaround times and CAP accreditation standards.',
     hasCnicCopy: true,
     hasDegreeCopy: true,
     hasLicenseCopy: true,
@@ -443,16 +499,43 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
     interviewDetails: {
       scheduledDate: '2026-09-22',
       scheduledTime: '11:00 AM',
-      venue: 'CDC Boardroom, 2nd Floor, Sector G-8, Islamabad',
+      venue: 'CCIH Boardroom, 2nd Floor, Sector G-8, Islamabad',
       interviewType: 'Panel Assessment',
-      panelMembers: 'Dr. Tariq (Head of Lab), Medical Director, HR Manager',
-      notes: 'Please bring original PMDC registration and FCPS degree certificates.'
+      panelMembers: 'Dr. Tariq Mahmood (MS), Imran Yaseen (HR), Sister Rubina (Nursing)',
+      notes: 'Please bring original PMDC registration, FCPS degree certificates, and 2 passport photos.',
+      overallDecision: 'Recommended',
+      teamMembers: [
+        {
+          id: 'team-1',
+          name: 'Dr. Tariq Mahmood',
+          designation: 'Medical Superintendent / Head of Diagnostics',
+          recommendation: 'Strongly Recommended',
+          rating: 9,
+          remarks: 'Exceptional diagnostic acumen in surgical margins, frozen sections, and IHC panels. Candidate demonstrates top-tier clinical confidence and team leadership.'
+        },
+        {
+          id: 'team-2',
+          name: 'Imran Yaseen',
+          designation: 'HR & Recruitment Lead (0302-7563119)',
+          recommendation: 'Recommended',
+          rating: 9,
+          remarks: 'Verified credentials, PMDC active licensure checked, professional communication, and 30-day notice period confirmed. Recommended for consultant package.'
+        },
+        {
+          id: 'team-3',
+          name: 'Sister Rubina Kausar',
+          designation: 'Director of Nursing & Patient Safety',
+          recommendation: 'Recommended',
+          rating: 8,
+          remarks: 'Good bedside collaboration attitude and respect for clinical workflow safety standards.'
+        }
+      ]
     },
     tags: ['FCPS', 'High Priority', 'IHC Expert']
   },
   {
-    id: 'CDC-2026-1082',
-    jobId: 'CDC-JOB-102',
+    id: 'CCIH-2026-1082',
+    jobId: 'CCIH-JOB-102',
     jobTitle: 'Senior Medical Lab Technologist (MLT)',
     department: 'pathology_lab',
     appliedAt: '2026-09-14 14:15',
@@ -495,8 +578,8 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
     tags: ['Sysmex', 'Cobas', 'Rotational Duty']
   },
   {
-    id: 'CDC-2026-1083',
-    jobId: 'CDC-JOB-104',
+    id: 'CCIH-2026-1083',
+    jobId: 'CCIH-JOB-104',
     jobTitle: 'Consultant Radiologist',
     department: 'radiology_imaging',
     appliedAt: '2026-09-11 09:40',
@@ -547,8 +630,8 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
     tags: ['FCPS', 'MRI Expert', 'Top Tier']
   },
   {
-    id: 'CDC-2026-1084',
-    jobId: 'CDC-JOB-106',
+    id: 'CCIH-2026-1084',
+    jobId: 'CCIH-JOB-106',
     jobTitle: 'Medical Officer - Emergency & ICU',
     department: 'hospital_clinical',
     appliedAt: '2026-09-15 16:20',
@@ -591,8 +674,8 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
     tags: ['BLS/ACLS', 'Emergency Room', 'Immediate Joiner']
   },
   {
-    id: 'CDC-2026-1085',
-    jobId: 'CDC-JOB-107',
+    id: 'CCIH-2026-1085',
+    jobId: 'CCIH-JOB-107',
     jobTitle: 'Head Staff Nurse - Critical Care / ICU',
     department: 'hospital_nursing',
     appliedAt: '2026-09-13 18:00',
@@ -635,8 +718,8 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
     tags: ['PNC Verified', 'ICU Experienced', 'Offer Accepted']
   },
   {
-    id: 'CDC-2026-1086',
-    jobId: 'CDC-JOB-110',
+    id: 'CCIH-2026-1086',
+    jobId: 'CCIH-JOB-110',
     jobTitle: 'Assistant Manager Accounts & Patient Billing',
     department: 'accounts_finance',
     appliedAt: '2026-09-10 12:45',
@@ -679,7 +762,7 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
     interviewDetails: {
       scheduledDate: '2026-09-23',
       scheduledTime: '02:00 PM',
-      venue: 'Finance Conference Room, CDC Islamabad',
+      venue: 'Finance Conference Room, CCIH Islamabad',
       interviewType: 'In-person',
       panelMembers: 'CFO, Head of Accounts, HR Director',
       notes: 'Bring previous panel reconciliation portfolio and tax certificates.'
@@ -687,8 +770,8 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
     tags: ['ACCA', 'Hospital Billing', 'Tax & Audit']
   },
   {
-    id: 'CDC-2026-1087',
-    jobId: 'CDC-JOB-109',
+    id: 'CCIH-2026-1087',
+    jobId: 'CCIH-JOB-109',
     jobTitle: 'HR Officer - Talent Acquisition & Credentialing',
     department: 'hr_team',
     appliedAt: '2026-09-14 10:10',
@@ -730,8 +813,8 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
     tags: ['NUST MBA', 'Credentialing', 'Hospital HR']
   },
   {
-    id: 'CDC-2026-1088',
-    jobId: 'CDC-JOB-103',
+    id: 'CCIH-2026-1088',
+    jobId: 'CCIH-JOB-103',
     jobTitle: 'Phlebotomist & Sample Collection Officer',
     department: 'pathology_lab',
     appliedAt: '2026-09-16 08:50',
@@ -766,8 +849,8 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
     tags: ['Fresh/1 Yr', 'NIH Diploma', 'Fast Punctures']
   },
   {
-    id: 'CDC-2026-1089',
-    jobId: 'CDC-JOB-108',
+    id: 'CCIH-2026-1089',
+    jobId: 'CCIH-JOB-108',
     jobTitle: 'Hospital Pharmacist & Formulary Specialist',
     department: 'hospital_pharmacy',
     appliedAt: '2026-09-15 11:15',
@@ -810,8 +893,8 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
     tags: ['Pharm-D', 'Category-A', 'Hospital Inpatient']
   },
   {
-    id: 'CDC-2026-1090',
-    jobId: 'CDC-JOB-111',
+    id: 'CCIH-2026-1090',
+    jobId: 'CCIH-JOB-111',
     jobTitle: 'Patient Care & Front Desk Coordinator',
     department: 'admin_support',
     appliedAt: '2026-09-16 15:50',
@@ -847,8 +930,8 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
   }
 ];
 
-const JOBS_STORAGE_KEY = 'cdc_ccih_job_posts_v1';
-const APPLICATIONS_STORAGE_KEY = 'cdc_ccih_applications_v1';
+const JOBS_STORAGE_KEY = 'ccih_hospital_job_posts_v2';
+const APPLICATIONS_STORAGE_KEY = 'ccih_hospital_applications_v2';
 
 export function getStoredJobs(): JobPost[] {
   try {

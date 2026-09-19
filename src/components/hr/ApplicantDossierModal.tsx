@@ -21,9 +21,13 @@ import {
   Briefcase,
   GraduationCap,
   Banknote,
-  Printer
+  Printer,
+  Plus,
+  Trash2,
+  Users,
+  CheckCircle
 } from 'lucide-react';
-import { JobApplication, ApplicationStatus, HRNote, InterviewSchedule } from '../../types';
+import { JobApplication, ApplicationStatus, HRNote, InterviewSchedule, InterviewTeamMember } from '../../types';
 import { getStatusBadge, getDepartmentInfo } from '../../utils/formatters';
 
 interface ApplicantDossierModalProps {
@@ -57,7 +61,7 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
     application.interviewDetails?.scheduledTime || '11:30 AM'
   );
   const [interviewVenue, setInterviewVenue] = useState(
-    application.interviewDetails?.venue || 'CDC Executive Boardroom, 2nd Floor, Sector G-8 Markaz, Islamabad'
+    application.interviewDetails?.venue || 'Capital Care International Hospital (CCIH) Executive Boardroom, Islamabad'
   );
   const [interviewType, setInterviewType] = useState<'In-person' | 'Online Video' | 'Panel Assessment'>(
     application.interviewDetails?.interviewType || 'In-person'
@@ -70,17 +74,74 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
   );
   const [interviewSavedMessage, setInterviewSavedMessage] = useState(false);
 
+  // Interview Team Members & Remarks state
+  const [teamMembers, setTeamMembers] = useState<InterviewTeamMember[]>(() => {
+    if (application.interviewDetails?.teamMembers && application.interviewDetails.teamMembers.length > 0) {
+      return application.interviewDetails.teamMembers;
+    }
+    return [
+      {
+        id: 'tm-1',
+        name: 'Dr. Tariq Mahmood',
+        designation: 'Medical Superintendent / Panel Chair',
+        recommendation: 'Strongly Recommended',
+        rating: 9,
+        remarks: 'Demonstrated exemplary clinical diagnostic acumen and emergency protocols familiarity. Recommended for appointment.'
+      },
+      {
+        id: 'tm-2',
+        name: 'Dr. Ayesha Malik',
+        designation: 'Head of Clinical Department',
+        recommendation: 'Recommended',
+        rating: 8,
+        remarks: 'Solid grasp of patient management and hospital reporting. Validated PMDC/PNC council credentials.'
+      }
+    ];
+  });
+
+  const [overallDecision, setOverallDecision] = useState<'Recommended' | 'Shortlisted' | 'Offer Extended' | 'Not Selected' | 'Pending Evaluation'>(
+    application.interviewDetails?.overallDecision || 'Recommended'
+  );
+
   const statusInfo = getStatusBadge(application.status);
   const dept = getDepartmentInfo(application.department);
 
+  const handleAddTeamMember = (defaultName = '', defaultRole = '') => {
+    const newMember: InterviewTeamMember = {
+      id: `tm-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      name: defaultName,
+      designation: defaultRole,
+      recommendation: 'Recommended',
+      rating: 8,
+      remarks: '',
+    };
+    setTeamMembers(prev => [...prev, newMember]);
+  };
+
+  const handleRemoveTeamMember = (id: string) => {
+    setTeamMembers(prev => prev.filter(m => m.id !== id));
+  };
+
+  const handleUpdateTeamMember = (id: string, field: keyof InterviewTeamMember, value: any) => {
+    setTeamMembers(prev =>
+      prev.map(m => (m.id === id ? { ...m, [field]: value } : m))
+    );
+  };
+
   const handleSaveInterview = (e: React.FormEvent) => {
     e.preventDefault();
+    const formattedPanelNames = teamMembers.length > 0
+      ? teamMembers.map(m => m.name ? `${m.name} (${m.designation || 'Member'})` : m.designation).filter(Boolean).join(', ')
+      : panelMembers;
+
     onScheduleInterview(application.id, {
       scheduledDate: interviewDate,
       scheduledTime: interviewTime,
       venue: interviewVenue,
       interviewType,
-      panelMembers,
+      panelMembers: formattedPanelNames || 'CCIH Interview Panel',
+      teamMembers,
+      overallDecision,
       notes: interviewNotes,
     });
     setInterviewSavedMessage(true);
@@ -266,36 +327,76 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
                 </div>
 
                 {/* Academic & Licensure */}
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                    <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
-                    Qualifications & Licensure
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 md:col-span-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
+                      Academic Qualifications & Degrees (SSC to PhD)
+                    </span>
+                    {application.educationList && application.educationList.length > 0 && (
+                      <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        {application.educationList.length} Qualifications Listed
+                      </span>
+                    )}
                   </h3>
 
-                  <div className="space-y-2 text-xs">
-                    <div className="flex justify-between py-1 border-b border-slate-100">
-                      <span className="text-slate-500">Highest Degree</span>
-                      <span className="font-bold text-slate-900">{application.highestDegree}</span>
+                  {application.educationList && application.educationList.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs border-collapse">
+                        <thead>
+                          <tr className="border-b border-slate-200 bg-slate-50 text-slate-600">
+                            <th className="py-2 px-3 font-semibold">Level</th>
+                            <th className="py-2 px-3 font-semibold">Degree / Certificate</th>
+                            <th className="py-2 px-3 font-semibold">Passing Year</th>
+                            <th className="py-2 px-3 font-semibold">Board / University</th>
+                            <th className="py-2 px-3 font-semibold">Marks / CGPA</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {application.educationList.map((edu, idx) => (
+                            <tr key={edu.id || idx} className="hover:bg-slate-50/50">
+                              <td className="py-2.5 px-3">
+                                <span className="inline-block px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-md uppercase tracking-wider">
+                                  {edu.level}
+                                </span>
+                              </td>
+                              <td className="py-2.5 px-3 font-bold text-slate-900">{edu.degreeName}</td>
+                              <td className="py-2.5 px-3 font-mono text-slate-600">{edu.passingYear}</td>
+                              <td className="py-2.5 px-3 text-slate-700">{edu.boardOrUniversity}</td>
+                              <td className="py-2.5 px-3 font-medium text-slate-600">{edu.gradeOrCgpa || '—'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-slate-100">
-                      <span className="text-slate-500">Specialization</span>
-                      <span className="font-semibold text-slate-900">{application.specialization || 'Clinical'}</span>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                      <div className="flex justify-between py-1 border-b border-slate-100">
+                        <span className="text-slate-500">Highest Degree</span>
+                        <span className="font-bold text-slate-900">{application.highestDegree}</span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-slate-100">
+                        <span className="text-slate-500">Specialization</span>
+                        <span className="font-semibold text-slate-900">{application.specialization || 'Clinical'}</span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-slate-100">
+                        <span className="text-slate-500">Institute / University</span>
+                        <span className="text-slate-900 text-right truncate" title={application.institution}>
+                          {application.institution}
+                        </span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-slate-100">
+                        <span className="text-slate-500">Completion Year</span>
+                        <span className="text-slate-900">{application.passingYear}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-slate-100">
-                      <span className="text-slate-500">Institute / University</span>
-                      <span className="text-slate-900 text-right max-w-[200px] truncate" title={application.institution}>
-                        {application.institution}
-                      </span>
-                    </div>
-                    <div className="flex justify-between py-1 border-b border-slate-100">
-                      <span className="text-slate-500">Completion Year</span>
-                      <span className="text-slate-900">{application.passingYear}</span>
-                    </div>
+                  )}
 
-                    {/* Registration license badge */}
-                    <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200/80 mt-2">
+                  {/* Registration license badge */}
+                  <div className="p-3 bg-emerald-50/80 rounded-xl border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
                       <span className="text-[10px] font-bold text-emerald-800 uppercase block">
-                        Council Licensure Status
+                        Regulatory Council Registration Status (PMDC / PNC / Pharmacy / ACCA)
                       </span>
                       {application.registrationNumber ? (
                         <div className="flex items-center gap-2 mt-1">
@@ -303,51 +404,163 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
                           <span className="font-mono font-bold text-xs text-emerald-900">
                             {application.registrationNumber}
                           </span>
-                          <span className="text-[10px] bg-emerald-200 text-emerald-800 px-1.5 py-0.2 rounded-sm font-semibold">
-                            Registered
+                          <span className="text-[10px] bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded-sm font-semibold">
+                            Verified Council Registration
                           </span>
                         </div>
                       ) : (
-                        <p className="text-[11px] text-slate-500 mt-1">No clinical council registration specified.</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">No clinical council registration specified / Not required for this non-clinical role.</p>
                       )}
                     </div>
                   </div>
                 </div>
 
                 {/* Professional Experience & Compensation */}
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                    <Briefcase className="w-3.5 h-3.5 text-emerald-600" />
-                    Employment & Compensation
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 md:col-span-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <Briefcase className="w-3.5 h-3.5 text-emerald-600" />
+                      Hospital & Clinical Employment History
+                    </span>
+                    <span className="text-xs font-semibold text-slate-600">
+                      Total Experience: <strong className="text-slate-900">{application.totalExperienceYears} Year(s)</strong>
+                    </span>
                   </h3>
 
-                  <div className="space-y-2 text-xs">
-                    <div className="flex justify-between py-1 border-b border-slate-100">
-                      <span className="text-slate-500">Total Experience</span>
-                      <span className="font-bold text-slate-900">{application.totalExperienceYears} Year(s)</span>
+                  {application.experienceList && application.experienceList.length > 0 ? (
+                    <div className="space-y-3">
+                      {application.experienceList.map((exp, idx) => (
+                        <div key={exp.id || idx} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1.5 text-xs">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <span className="w-5 h-5 rounded-full bg-slate-800 text-white text-[10px] font-bold flex items-center justify-center">
+                                {idx + 1}
+                              </span>
+                              <strong className="text-slate-900 text-sm">{exp.organization}</strong>
+                              {exp.isCurrent && (
+                                <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                                  Current Role
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-slate-500 font-mono text-[11px]">
+                              {exp.startDate} – {exp.isCurrent ? 'Present' : exp.endDate}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 pt-1 border-t border-slate-200/60">
+                            <div>
+                              <span className="font-semibold text-slate-700">Designation: </span>
+                              <span className="text-slate-900 font-medium">{exp.designation}</span>
+                            </div>
+                            {exp.department && (
+                              <div>
+                                <span className="font-semibold text-slate-700">Department: </span>
+                                <span>{exp.department}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {exp.responsibilities && (
+                            <p className="text-[11px] text-slate-600 italic bg-white p-2 rounded-lg border border-slate-200/60">
+                              "{exp.responsibilities}"
+                            </p>
+                          )}
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex justify-between py-1 border-b border-slate-100">
-                      <span className="text-slate-500">Current Employer</span>
-                      <span className="font-semibold text-slate-900">{application.currentEmployer || 'Not Specified'}</span>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                      <div className="flex justify-between py-1 border-b border-slate-100">
+                        <span className="text-slate-500">Current Employer</span>
+                        <span className="font-semibold text-slate-900">{application.currentEmployer || 'Fresh Graduate / No Record'}</span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-slate-100">
+                        <span className="text-slate-500">Current Role</span>
+                        <span className="text-slate-900">{application.currentDesignation || 'Candidate'}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-slate-100">
-                      <span className="text-slate-500">Current Role</span>
-                      <span className="text-slate-900">{application.currentDesignation || 'Active Practitioner'}</span>
+                  )}
+
+                  {/* Compensation Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                    <div>
+                      <span className="text-slate-500 block">Current Salary</span>
+                      <span className="font-semibold text-slate-800">{application.currentSalary || 'Confidential / Fresh'}</span>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-slate-100">
-                      <span className="text-slate-500">Current Salary</span>
-                      <span className="text-slate-700">{application.currentSalary || 'Confidential'}</span>
-                    </div>
-                    <div className="flex justify-between py-1 border-b border-slate-100">
-                      <span className="text-slate-500">Expected Salary</span>
+                    <div>
+                      <span className="text-slate-500 block">Expected Salary</span>
                       <span className="font-bold text-emerald-700">{application.expectedSalary}</span>
                     </div>
-                    <div className="flex justify-between py-1">
-                      <span className="text-slate-500">Notice Period</span>
-                      <span className="font-semibold text-slate-900">{application.noticePeriodDays} Days</span>
+                    <div>
+                      <span className="text-slate-500 block">Notice Period</span>
+                      <span className="font-semibold text-slate-900">{application.noticePeriodDays} Days Availability</span>
                     </div>
                   </div>
                 </div>
+
+                {/* Interview Team Evaluation & Panel Remarks Summary Card (if scheduled) */}
+                {application.interviewDetails && (
+                  <div className="bg-purple-50/60 p-5 rounded-2xl border border-purple-200/80 space-y-3 md:col-span-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-purple-900 flex items-center gap-1.5">
+                        <Users className="w-3.5 h-3.5 text-purple-700" />
+                        Interview Team Members & Panel Remarks
+                      </h3>
+                      {application.interviewDetails.overallDecision && (
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-200 text-purple-900 border border-purple-300">
+                          Verdict: {application.interviewDetails.overallDecision}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="text-xs text-purple-800 space-y-1">
+                      <p>
+                        <strong>Date & Venue:</strong> {application.interviewDetails.scheduledDate} at {application.interviewDetails.scheduledTime} • {application.interviewDetails.venue}
+                      </p>
+                    </div>
+
+                    {application.interviewDetails.teamMembers && application.interviewDetails.teamMembers.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        {application.interviewDetails.teamMembers.map((member, idx) => (
+                          <div key={member.id || idx} className="p-3 bg-white rounded-xl border border-purple-100 shadow-xs space-y-2 text-xs">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <strong className="text-slate-900 block">{member.name || `Panel Member #${idx + 1}`}</strong>
+                                <span className="text-[11px] text-slate-500">{member.designation}</span>
+                              </div>
+                              <div className="text-right">
+                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                  member.recommendation === 'Strongly Recommended' ? 'bg-emerald-100 text-emerald-800' :
+                                  member.recommendation === 'Recommended' ? 'bg-green-100 text-green-800' :
+                                  member.recommendation === 'Conditional / Hold' ? 'bg-amber-100 text-amber-800' :
+                                  member.recommendation === 'Not Recommended' ? 'bg-rose-100 text-rose-800' :
+                                  'bg-slate-100 text-slate-800'
+                                }`}>
+                                  {member.recommendation || 'Evaluated'}
+                                </span>
+                                {member.rating && (
+                                  <div className="text-[10px] text-slate-400 font-semibold mt-0.5">
+                                    Score: {member.rating}/10
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            {member.remarks && (
+                              <p className="text-[11px] text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 leading-relaxed">
+                                <strong>Remarks:</strong> "{member.remarks}"
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-purple-700 italic">
+                        Panel: {application.interviewDetails.panelMembers}
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* Supporting Documents & Verification */}
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3">
@@ -549,9 +762,9 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
                   <select
                     value={interviewType}
                     onChange={e => setInterviewType(e.target.value as any)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-purple-500 bg-white"
                   >
-                    <option value="In-person">In-person (CDC Campus Islamabad)</option>
+                    <option value="In-person">In-person (Capital Care International Hospital - CCIH Islamabad)</option>
                     <option value="Panel Assessment">Panel Assessment & Clinical Viva</option>
                     <option value="Online Video">Online Video Consultation (Zoom / Teams)</option>
                   </select>
@@ -563,22 +776,197 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
                     type="text"
                     value={interviewVenue}
                     onChange={e => setInterviewVenue(e.target.value)}
-                    placeholder="e.g. Executive Boardroom, 2nd Floor, Sector G-8 Markaz, Islamabad"
+                    placeholder="e.g. Executive Boardroom, 2nd Floor, Capital Care International Hospital, Islamabad"
                     required
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-purple-500 bg-white"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Interview Panel Members</label>
-                  <input
-                    type="text"
-                    value={panelMembers}
-                    onChange={e => setPanelMembers(e.target.value)}
-                    placeholder="e.g. Head of Pathology, Medical Superintendent, HR Director"
-                    required
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-purple-500"
-                  />
+                {/* INTERVIEW TEAM MEMBERS & INDIVIDUAL REMARKS */}
+                <div className="p-4 bg-purple-50/50 rounded-2xl border border-purple-200 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-purple-200/80 pb-3">
+                    <div>
+                      <h4 className="text-xs font-bold text-purple-950 uppercase tracking-wider flex items-center gap-1.5">
+                        <Users className="w-4 h-4 text-purple-700" />
+                        Interview Panel Members & Evaluation Remarks
+                      </h4>
+                      <p className="text-[11px] text-purple-800 mt-0.5">
+                        Add interview team members and record their individual feedback, scores, and recommendations.
+                      </p>
+                    </div>
+
+                    {/* Quick Add Presets */}
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="text-[10px] font-semibold text-purple-800">Quick Add:</span>
+                      <button
+                        type="button"
+                        onClick={() => handleAddTeamMember('Dr. Tariq Mahmood', 'Medical Superintendent')}
+                        className="px-2 py-0.5 text-[10px] font-medium bg-white hover:bg-purple-100 text-purple-900 rounded-md border border-purple-300 transition-colors"
+                      >
+                        + Med Supdt
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAddTeamMember('Dr. Ayesha Malik', 'Head of Clinical Department')}
+                        className="px-2 py-0.5 text-[10px] font-medium bg-white hover:bg-purple-100 text-purple-900 rounded-md border border-purple-300 transition-colors"
+                      >
+                        + HOD
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAddTeamMember('Sister Rubina Kausar', 'Director of Nursing')}
+                        className="px-2 py-0.5 text-[10px] font-medium bg-white hover:bg-purple-100 text-purple-900 rounded-md border border-purple-300 transition-colors"
+                      >
+                        + Nursing Head
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAddTeamMember('Imran Yaseen', 'HR & Recruitment Lead')}
+                        className="px-2 py-0.5 text-[10px] font-medium bg-white hover:bg-purple-100 text-purple-900 rounded-md border border-purple-300 transition-colors"
+                      >
+                        + HR Lead
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Team Member Cards */}
+                  <div className="space-y-3">
+                    {teamMembers.map((member, idx) => (
+                      <div
+                        key={member.id}
+                        className="p-3.5 bg-white rounded-xl border border-purple-200/90 shadow-xs space-y-3 relative group"
+                      >
+                        <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="w-5 h-5 rounded-full bg-purple-700 text-white text-[10px] font-bold flex items-center justify-center">
+                              {idx + 1}
+                            </span>
+                            <span className="text-xs font-bold text-slate-800">
+                              {member.name || `Interview Panel Member #${idx + 1}`}
+                            </span>
+                            {member.designation && (
+                              <span className="text-[11px] text-slate-500">
+                                • {member.designation}
+                              </span>
+                            )}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveTeamMember(member.id)}
+                            className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1 rounded-md transition-colors text-xs flex items-center gap-1"
+                            title="Remove panel member"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span className="text-[10px]">Remove</span>
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 text-xs">
+                          <div className="sm:col-span-4">
+                            <label className="block font-semibold text-slate-700 mb-1">
+                              Interviewer Name <span className="text-rose-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={member.name}
+                              onChange={e => handleUpdateTeamMember(member.id, 'name', e.target.value)}
+                              placeholder="e.g. Dr. Tariq Mahmood"
+                              className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs focus:ring-2 focus:ring-purple-500 bg-white"
+                            />
+                          </div>
+
+                          <div className="sm:col-span-4">
+                            <label className="block font-semibold text-slate-700 mb-1">
+                              Hospital Role / Designation
+                            </label>
+                            <input
+                              type="text"
+                              value={member.designation}
+                              onChange={e => handleUpdateTeamMember(member.id, 'designation', e.target.value)}
+                              placeholder="e.g. Medical Superintendent"
+                              className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs focus:ring-2 focus:ring-purple-500 bg-white"
+                            />
+                          </div>
+
+                          <div className="sm:col-span-2">
+                            <label className="block font-semibold text-slate-700 mb-1">
+                              Recommendation
+                            </label>
+                            <select
+                              value={member.recommendation}
+                              onChange={e => handleUpdateTeamMember(member.id, 'recommendation', e.target.value)}
+                              className="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs focus:ring-2 focus:ring-purple-500 bg-white"
+                            >
+                              <option value="Strongly Recommended">Strongly Rec.</option>
+                              <option value="Recommended">Recommended</option>
+                              <option value="Conditional / Hold">Conditional / Hold</option>
+                              <option value="Not Recommended">Not Rec.</option>
+                              <option value="Pending Review">Pending</option>
+                            </select>
+                          </div>
+
+                          <div className="sm:col-span-2">
+                            <label className="block font-semibold text-slate-700 mb-1">
+                              Rating (1-10)
+                            </label>
+                            <select
+                              value={member.rating || 8}
+                              onChange={e => handleUpdateTeamMember(member.id, 'rating', Number(e.target.value))}
+                              className="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs focus:ring-2 focus:ring-purple-500 bg-white"
+                            >
+                              {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(num => (
+                                <option key={num} value={num}>{num}/10 Score</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Individual Interviewer Remarks */}
+                          <div className="sm:col-span-12">
+                            <label className="block font-semibold text-slate-700 mb-1">
+                              Interviewer Remarks & Clinical / Technical Assessment <span className="text-rose-500">*</span>
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={member.remarks}
+                              onChange={e => handleUpdateTeamMember(member.id, 'remarks', e.target.value)}
+                              placeholder="Record clinical questions evaluated, diagnostic problem solving, communication bedside manner, and hiring remarks..."
+                              className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs focus:ring-2 focus:ring-purple-500 bg-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Add Member Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleAddTeamMember()}
+                    className="w-full py-2 px-3 rounded-xl border border-dashed border-purple-300 hover:border-purple-500 bg-white hover:bg-purple-50 text-purple-800 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>+ Add Another Interview Team Member</span>
+                  </button>
+
+                  {/* Overall Committee Verdict */}
+                  <div className="p-3 bg-white rounded-xl border border-purple-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <label className="text-xs font-bold text-slate-700">
+                      Overall Interview Committee Verdict:
+                    </label>
+                    <select
+                      value={overallDecision}
+                      onChange={e => setOverallDecision(e.target.value as any)}
+                      className="px-3 py-1.5 rounded-lg border border-purple-300 text-xs font-bold bg-purple-50 text-purple-950 focus:ring-2 focus:ring-purple-500"
+                    >
+                      <option value="Recommended">Recommended for Appointment</option>
+                      <option value="Shortlisted">Shortlisted for Final Round</option>
+                      <option value="Offer Extended">Formal Job Offer Extended</option>
+                      <option value="Conditional / Hold">On Hold / Awaiting Verification</option>
+                      <option value="Not Selected">Not Selected</option>
+                      <option value="Pending Evaluation">Pending Evaluation</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
@@ -587,17 +975,18 @@ export const ApplicantDossierModal: React.FC<ApplicantDossierModalProps> = ({
                     rows={2}
                     value={interviewNotes}
                     onChange={e => setInterviewNotes(e.target.value)}
-                    placeholder="e.g. Please bring original PMDC registration and original degree transcripts."
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-purple-500"
+                    placeholder="e.g. Please bring original PMDC registration, educational degrees, and 2 passport photos."
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-purple-500 bg-white"
                   />
                 </div>
 
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold shadow-md transition-colors cursor-pointer"
+                    className="w-full py-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold shadow-md transition-colors cursor-pointer flex items-center justify-center gap-2"
                   >
-                    Confirm & Dispatch Interview Schedule
+                    <CheckCircle className="w-4 h-4" />
+                    <span>Confirm, Save Panel Remarks & Dispatch Interview Schedule</span>
                   </button>
                 </div>
               </form>

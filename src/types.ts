@@ -57,17 +57,66 @@ export interface HRNote {
   text: string;
 }
 
+export type EducationLevel =
+  | 'SSC / Matric'
+  | 'HSSC / Intermediate / FSc / FA'
+  | 'BS / 16 Years of Education'
+  | 'M.Phil / MS / 18 Years'
+  | 'PhD / Doctorate'
+  | 'Diploma / Certification'
+  | 'Other';
+
+export interface EducationEntry {
+  id: string;
+  level: EducationLevel | string;
+  degreeName: string; // e.g. "Matric Science", "FSc Pre-Medical", "BS MLT", "MBBS", "M.Phil Pathology"
+  passingYear: string; // e.g. "2018"
+  boardOrUniversity: string; // e.g. "FBISE Islamabad", "Quaid-i-Azam University", "SZABMU / PIMS"
+  gradeOrCgpa?: string; // e.g. "3.8 CGPA", "A+", "84%"
+}
+
+export interface ExperienceEntry {
+  id: string;
+  organization: string; // e.g. "Capital Care International Hospital", "PIMS Islamabad"
+  designation: string; // e.g. "Medical Officer", "Staff Nurse", "Medical Lab Technologist"
+  department?: string; // e.g. "Accident & Emergency / ICU"
+  startDate: string; // e.g. "2021-02" or "2021"
+  endDate: string; // e.g. "2024-05" or "Present"
+  isCurrent?: boolean;
+  responsibilities?: string;
+}
+
+export type InterviewRecommendation =
+  | 'Strongly Recommended'
+  | 'Recommended'
+  | 'Conditional / Hold'
+  | 'Not Recommended'
+  | 'Pending Review';
+
+export interface InterviewTeamMember {
+  id: string;
+  name: string; // e.g. "Dr. Tariq Mahmood"
+  designation: string; // e.g. "Medical Director / Panel Chair"
+  department?: string; // e.g. "Clinical Governance"
+  recommendation?: InterviewRecommendation;
+  rating?: number; // 1 to 10
+  remarks: string; // Detailed member evaluation notes & clinical feedback
+  evaluatedAt?: string;
+}
+
 export interface InterviewSchedule {
   scheduledDate: string;
   scheduledTime: string;
-  venue: string; // e.g. "CDC Executive Board Room, Sector G-8, Islamabad"
+  venue: string; // e.g. "Capital Care International Hospital Executive Boardroom"
   interviewType: 'In-person' | 'Online Video' | 'Panel Assessment';
   panelMembers: string;
+  teamMembers?: InterviewTeamMember[];
+  overallDecision?: 'Recommended' | 'Shortlisted' | 'Offer Extended' | 'Not Selected' | 'Pending Evaluation';
   notes?: string;
 }
 
 export interface JobApplication {
-  id: string; // e.g. CDC-2026-1045
+  id: string; // e.g. CCIH-2026-1045
   jobId: string;
   jobTitle: string;
   department: DepartmentCategory;
@@ -84,20 +133,22 @@ export interface JobApplication {
   city: string;
   address: string;
   
-  // Qualifications
+  // Qualifications & Multi-tier Education
   highestDegree: string;
   specialization: string;
   institution: string;
   passingYear: string;
   registrationNumber?: string; // PMDC, PNC, Pharmacy Council, etc.
+  educationList?: EducationEntry[]; // Addable qualifications: SSC, HSSC, BS, M.Phil, PhD
   
-  // Experience
+  // Professional Experience
   totalExperienceYears: number;
   currentEmployer?: string;
   currentDesignation?: string;
   currentSalary?: string;
   expectedSalary: string;
   noticePeriodDays: number;
+  experienceList?: ExperienceEntry[]; // Addable previous experience history
   
   // Documents & Cover Note
   resumeFileName: string;
